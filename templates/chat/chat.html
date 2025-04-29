@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Chat{% endblock %}
+
+{% block content %}
+    <div class="container text-center mx-0">
+        <div class="row">
+            <div class="col-3">
+                <ul class="list_pk">
+                    {% for computer in computers %}
+                    <li>
+                        <a href="#">{{ computer.name }}</a>
+                    </li>
+                        {% empty %}
+                        <li>
+                        <p>You don't have any computers</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-9">
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
