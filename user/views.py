@@ -13,11 +13,10 @@ def register_new_user(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = UserForm(request.POST)
         if form.is_valid():
-            form.save()
-            # user = form.save()
+            user = form.save()
             # user.set_password(form.cleaned_data["password"])
             # user.save()
-            # login(request, user)
+            login(request, user)
             return redirect("user:home")
     else:
         form = UserForm()
