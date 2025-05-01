@@ -128,5 +128,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # User Model
 AUTH_USER_MODEL = 'user.User'
-LOGIN_URL = "login"
-LOGOUT_URL = "logout"
+LOGIN_URL = "user:login"
+LOGIN_REDIRECT_URL = "user:home"
+LOGOUT_URL = "user:logout"
+LOGOUT_REDIRECT_URL = "user:login"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}

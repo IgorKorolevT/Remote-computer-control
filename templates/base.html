@@ -40,11 +40,22 @@
                                     {{ user.name }}
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="#">Profile</a></li>
-                                    <li><a class="dropdown-item" href="#">Logout</a></li>
+                                    <li><a class="dropdown-item" href="{% url "user:profile" user.id %}">Profile</a>
+                                    </li>
+                                    <li>
+                                        <div class="dropdown-item">
+                                        <form action="{% url "user:logout" %}" method="post">
+                                            {% csrf_token %}
+                                            <button  type="submit">Logout</button>
+                                        </form>
+                                        </div>
+                                    </li>
                                 </ul>
                             </li>
                         {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url "user:register" %}">Sing up</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url "user:login" %}">Login</a>
                             </li>
