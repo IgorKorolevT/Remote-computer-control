@@ -1,0 +1,10 @@
+[project]
+name = "django-course-project"
+version = "0.1.0"
+description = "description"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "channels[daphne]>=4.2.2",
+    "django>=5.2",
+]
