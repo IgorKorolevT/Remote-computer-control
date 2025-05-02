@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-j$5plbwqw2*4kvkrgbha$o4ac_-46q=%u%bm4uve-4az577b!!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["192.168.50.16", "127.0.0.1", "localhost"]  # "127.0.0.1", "localhost"
 
 # Application definition
 
@@ -135,6 +135,9 @@ LOGOUT_REDIRECT_URL = "user:login"
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
 }
