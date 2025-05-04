@@ -34,7 +34,7 @@ class ChatComputerConsumer(AsyncWebsocketConsumer):
         create_message(message, pk_name, timestamp)
 
         pk = await sync_to_async(Computer.objects.filter(name=pk_name).first)()
-        if pk:
+        if pk and pk.channel_name:
             context = {"message": message, "channel_user": self.scope["user"].channel_name,
                        "type": "pk_private_message"}
             await self.channel_layer.send(pk.channel_name, context)
