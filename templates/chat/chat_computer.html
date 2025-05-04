@@ -15,12 +15,7 @@
     <script>
         const chatSocket = new WebSocket("ws://" + window.location.host + "/ws/chat/computers/" + "{{ chosen_computer.name }}" + "/");
         chatSocket.onopen = function (e) {
-            console.log('WebSocket-зєднання встановлено');
-            setInterval(() => {
-                if (chatSocket.readyState === WebSocket.OPEN) {
-                    chatSocket.send('heartbeat');
-                }
-            }, 30000);
+            console.log('The connection was setup successfully !');
         };
         chatSocket.onclose = function (e) {
             console.log("Something unexpected happened !");
@@ -35,7 +30,7 @@
             var messageInput = document.querySelector(
                 "#id_message_send_input"
             ).value;
-            chatSocket.send(JSON.stringify({message: messageInput, username: "{{request.user.username}}"}));
+            chatSocket.send(JSON.stringify({message: messageInput, username: "{{user.username}}"}));
         };
         chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data);
