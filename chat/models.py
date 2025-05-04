@@ -10,6 +10,7 @@ class Computer(models.Model):
     nickname = models.CharField(max_length=100, null=True, blank=True)
     password = models.CharField()
     users = models.ManyToManyField(User, related_name='computers')
+    channel_name = models.CharField(unique=True, null=True, blank=True)
 
     def __str__(self):
         return f"{self.name}"

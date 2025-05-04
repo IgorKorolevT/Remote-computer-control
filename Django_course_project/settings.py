@@ -69,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = 'Django_course_project.wsgi.application'
+WSGI_APPLICATION = 'Django_course_project.wsgi.application'
 ASGI_APPLICATION = 'Django_course_project.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases

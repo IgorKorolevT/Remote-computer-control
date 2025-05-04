@@ -1,0 +1,57 @@
+{% extends 'chat/chat.html' %}
+{% block chat %}
+    <h3>{{ chosen_computer.name }}</h3>
+    <div
+            class="chat__item__container"
+            id="id_chat_item_container"
+    >
+        <input type="text" id="id_message_send_input"/>
+        <button type="submit" id="id_message_send_button">Send Message</button>
+        <br/>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+    <script>
+        function create_message(data, sender, time) {
+            var div = document.createElement("div");
+            div.innerHTML = sender + " on " + time + " : " + data;
+            document.querySelector("#id_chat_item_container").appendChild(div);
+        }
+
+        const chatSocket = new WebSocket("ws://" + window.location.host + "/ws/chat/computers/" + "{{ chosen_computer.name }}" + "/");
+        chatSocket.onopen = function (e) {
+            console.log('The connection was setup successfully !');
+        };
+        chatSocket.onclose = function (e) {
+            console.log("Something unexpected happened !");
+        };
+        document.querySelector("#id_message_send_input").focus();
+        document.querySelector("#id_message_send_input").onkeyup = function (e) {
+            if (e.keyCode == 13) {
+                document.querySelector("#id_message_send_button").click();
+            }
+        };
+        document.querySelector("#id_message_send_button").onclick = function (e) {
+            var messageInput = document.querySelector(
+                "#id_message_send_input"
+            ).value;
+            document.querySelector("#id_message_send_input").value = "";
+            const current_date = new Date();
+            chatSocket.send(JSON.stringify({
+                message: messageInput,
+                receiver: '{{chosen_computer.name}}',
+                date: current_date
+            }));
+            create_message(messageInput, '{{ user.username }}', current_date)
+        };
+        chatSocket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            create_message(data.message, data.sender, data.date);
+
+        };
+        chatSocket.onerror = function (error) {
+            console.error("Error WebSocket:", error);
+        };
+    </script>
+{% endblock %}

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
+from django.db import models
 
 
 class User(AbstractUser):
-    pass
+    channel_name = models.CharField(unique=True, null=True, blank=True)
