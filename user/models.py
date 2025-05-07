@@ -4,4 +4,4 @@ from django.db import models
 
 class User(AbstractUser):
     channel_name = models.CharField(unique=True, null=True, blank=True)
-    # friend = models.ManyToManyField("self", blank=True)
+    friends = models.ManyToManyField("self", blank=True)

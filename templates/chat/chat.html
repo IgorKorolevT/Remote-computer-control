@@ -16,6 +16,15 @@
                             </li>
                         {% endfor %}
                     </ul>
+                    <h4 class="mb-3">Friends:</h4>
+                    <ul class="list_pk">
+                        {% for friend in friends %}
+                            <li class="mb-2">
+                                <a href="{% url 'chat:chat_friend' friend.username %}"
+                                   class="text-decoration-none">{{ friend.username }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
                 <div class="col-9">
                     {% block chat %}

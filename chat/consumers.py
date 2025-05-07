@@ -7,7 +7,7 @@ from chat.utils import acreate_message
 from user.models import User
 
 
-class ChatComputerConsumer(AsyncWebsocketConsumer):
+class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         user = self.scope["user"]
         if user.is_authenticated:
@@ -22,7 +22,32 @@ class ChatComputerConsumer(AsyncWebsocketConsumer):
         self.user.channel_name = None
         await sync_to_async(self.user.save)()
 
-    async def receive(self, text_data: str):
+
+class ChatFriendConsumer(ChatConsumer):
+    async def receive(self, text_data: str = None, bytes_data=None):
+        data = json.loads(text_data)
+        message = data["message"]
+        username = data["receiver"]
+        timestamp = data["date"]
+        receiver_user = await sync_to_async(User.objects.get)(username=username)
+        if receiver_user:
+            m = await acreate_message(text=message, sender=self.user, recipient=receiver_user, timestamp=timestamp)
+        if receiver_user and receiver_user.channel_name:
+            context = {"message": message, "date": str(m.timestamp), "sender": self.user.username,
+                       "type": "user_private_message"}
+            await self.channel_layer.send(receiver_user.channel_name, context)
+
+    async def user_private_message(self, event):
+        message = event["message"]
+        sender = event["sender"]
+        # TODO: date
+        time_send = event["date"]
+        data = json.dumps({"message": message, "sender": sender, "date": time_send})
+        await self.send(text_data=data)
+
+
+class ChatComputerConsumer(ChatConsumer):
+    async def receive(self, text_data: str = None, bytes_data=None):
         data = json.loads(text_data)
 
         message = data["message"]
@@ -67,7 +92,7 @@ class ComputerConsumer(AsyncWebsocketConsumer):
         self.pk.channel_name = None
         await sync_to_async(self.pk.save)()
 
-    async def receive(self, text_data):
+    async def receive(self, text_data: str = None, bytes_data=None):
         data = json.loads(text_data)
         user_id = data["user_id"]
         text = data["message"]
