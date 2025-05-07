@@ -8,6 +8,18 @@
         <input type="text" id="id_message_send_input"/>
         <button type="submit" id="id_message_send_button">Send Message</button>
         <br/>
+
+        {% for message in sent_m %}
+            <div>
+                {{ user.username }} on {{ message.timestamp }} : {{ message.text }}
+            </div>
+        {% endfor %}
+        {% for message in received_m %}
+            <div>
+                {{ chosen_computer.nickname }} on {{ message.timestamp }} : {{ message.text }}
+            </div>
+        {% endfor %}
+
     </div>
 
 {% endblock %}

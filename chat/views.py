@@ -18,10 +18,15 @@ def chat(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def chat_computer(request: HttpRequest, name) -> HttpResponse:
-    computers = request.user.computers.all()
+    user = request.user
+    computers = user.computers.all()
+    sent_m = user.sent_messages.all()
+    received_m = user.received_messages.all()
     context = {
         "computers": computers,
         "chosen_computer": computers.get(name=name),
+        "sent_m": sent_m,
+        "received_m": received_m,
     }
     return render(request, "chat/chat_computer.html", context)
 

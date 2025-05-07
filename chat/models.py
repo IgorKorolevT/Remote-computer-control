@@ -28,7 +28,7 @@ class Room(models.Model):
 
 
 class Message(models.Model):
-    context = models.TextField(max_length=500)  # change max_length
+    text = models.TextField(max_length=500)  # change max_length
     timestamp = models.DateTimeField(auto_now_add=True)
     sender_user = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE, null=True, blank=True)
     sender_computer = models.ForeignKey(Computer, related_name='sent_messages', on_delete=models.CASCADE, null=True,

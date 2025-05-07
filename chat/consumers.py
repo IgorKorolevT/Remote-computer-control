@@ -2,13 +2,9 @@ import json
 from datetime import datetime
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
-
 from chat.models import Computer
-
-
-def create_message(message, pk_name, timestamp):
-    """Create message"""
-    # TODO
+from chat.utils import acreate_message
+from user.models import User
 
 
 class ChatComputerConsumer(AsyncWebsocketConsumer):
@@ -28,14 +24,15 @@ class ChatComputerConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data: str):
         data = json.loads(text_data)
+
         message = data["message"]
         pk_name = data["receiver"]
         timestamp = data["date"]
-        create_message(message, pk_name, timestamp)
-
         pk = await sync_to_async(Computer.objects.filter(name=pk_name).first)()
+        if pk:
+            await acreate_message(text=message, sender=self.user, recipient=pk, timestamp=timestamp)
         if pk and pk.channel_name:
-            context = {"message": message, "channel_user": self.scope["user"].channel_name,
+            context = {"message": message, "user_id": self.user.id,
                        "type": "pk_private_message"}
             await self.channel_layer.send(pk.channel_name, context)
         else:
@@ -72,12 +69,21 @@ class ComputerConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        channel_user = data["channel_user"]
-        context = {"message": data["message"], "sender": self.pk.nickname, "type": "user_private_message"}
-        await self.channel_layer.send(channel_user, context)
+        user_id = data["user_id"]
+        text = data["message"]
+
+        try:
+            user = await sync_to_async(User.objects.get)(pk=user_id)
+        except Exception as e:  # TODO: replace to more suitable Error DoesNotExist
+            print(e)
+        else:
+            message = await acreate_message(text=text, sender=self.pk, recipient=user, timestamp=data.get("date"))
+            if user.channel_name:
+                context = {"message": text, "sender": self.pk.nickname, "type": "user_private_message"}
+                await self.channel_layer.send(user.channel_name, context)
 
     async def pk_private_message(self, event):
         message = event["message"]
-        channel_user = event["channel_user"]
-        data = json.dumps({"message": message, "channel_user": channel_user})
+        user_id = event["user_id"]
+        data = json.dumps({"message": message, "user_id": user_id})
         await self.send(text_data=data)
