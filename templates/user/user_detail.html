@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1>
+                    Hello,
+                    {% if user.first_name and user.last_name %}
+                        {{ user.first_name }} {{ user.last_name }}
+                    {% else %}
+                        {{ user.username }}
+                    {% endif %}!
+                </h1>
+            </div>
+        </div>
+
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Profile Information</h5>
+                        <p class="card-text">
+                            <strong>Username:</strong> {{ user.username }}
+                        </p>
+                        <p class="card-text">
+                            <strong>Email:</strong>
+                            {% if user.email %}
+                                {{ user.email }}
+                            {% else %}
+                                <span style="color: red;">Not provided</span>
+                            {% endif %}
+                        </p>
+                        <p class="card-text">
+                            <strong>Date Joined:</strong>
+                            {% if user.date_joined %}
+                                {{ user.date_joined|date:"F d, Y H:i" }}
+                            {% else %}
+                                Unknown
+                            {% endif %}
+                        </p>
+                        <p class="card-text">
+                            <strong>Last Login:</strong>
+                            {% if user.last_login %}
+                                {{ user.last_login|date:"F d, Y H:i" }}
+                            {% else %}
+                                Never logged in
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8 col-lg-6 text-center">
+                {% if user.is_superuser %}
+                    <a href="{% url 'admin:index' %}" class="btn btn-secondary">Admin</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

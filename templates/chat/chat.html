@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Chat{% endblock %}
+
+{% block content %}
+    <div class="container text-center mx-0">
+        {% if computers %}
+            <div class="row">
+                <div class="col-3 border-end border-chat">
+                    <h4 class="mb-3">Computers:</h4>
+                    <ul class="list_pk">
+                        {% for computer in computers %}
+                            <li class="mb-2">
+                                <a href="{% url 'chat:chat_computers' computer.name %}"
+                                   class="text-decoration-none">{{ computer.nickname }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <h4 class="mb-3">Friends:</h4>
+                    <ul class="list_pk">
+                        {% for friend in friends %}
+                            <li class="mb-2">
+                                <a href="{% url 'chat:chat_friend' friend.username %}"
+                                   class="text-decoration-none">{{ friend.username }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-9">
+                    {% block chat %}
+                        <p>chose computer</p>
+                    {% endblock %}
+                </div>
+            </div>
+        {% else %}
+            <p>you don't have any computers</p>
+        {% endif %}
+    </div>
+{% endblock %}
