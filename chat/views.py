@@ -3,8 +3,6 @@ from typing import Any
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, get_object_or_404
-
-from chat.models import Computer
 from user.models import User
 
 

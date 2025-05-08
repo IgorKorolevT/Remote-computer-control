@@ -43,12 +43,17 @@
                                     {{ user.name }}
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item profile-link" href="{% url "user:profile" user.id %}">Profile</a></li>
+                                    <li><a class="dropdown-item profile-link" href="{% url "user:profile" user.id %}">Profile</a>
+                                    </li>
                                     <li>
-                                        <form id="logout-form" action="{% url "user:logout" %}" method="post" style="display: none;">
-                                            {% csrf_token %}
-                                        </form>
-                                        <span class="dropdown-item logout-text" onclick="document.getElementById('logout-form').submit();">Logout</span>
+                                        <div class="dropdown-item">
+                                            <form id="logout-form" action="{% url "user:logout" %}" method="post"
+                                                  style="display: none;">
+                                                {% csrf_token %}
+                                                <input type="submit" class="btn btn-link" value="Logout">
+                                            </form>
+                                            {#                                        <span class="dropdown-item logout-text" onclick="document.getElementById('logout-form').submit();">Logout</span>#}
+                                        </div>
                                     </li>
                                 </ul>
                             </li>
