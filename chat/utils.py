@@ -4,8 +4,8 @@ from asgiref.sync import sync_to_async
 from user.models import User
 from chat.models import Computer, Room, Message
 
-type UserComputer = Union[User, Computer]
-type T_timestamp = Union[datetime, str]
+UserComputer = Union[User, Computer]
+T_timestamp = Union[datetime, str]
 
 
 def create_message(text: str, sender: UserComputer, recipient: UserComputer = None, room: Room = None,

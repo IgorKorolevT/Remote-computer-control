@@ -3,7 +3,7 @@ name = "django-course-project"
 version = "0.1.0"
 description = "description"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.10"
 dependencies = [
     "channels-redis>=4.2.1",
     "channels[daphne]>=4.2.2",
