@@ -1,39 +1,4 @@
-.list_pk {
+.list {
     padding: 0;
     list-style: none;
-}
-
-.name-user {
-    padding: .5rem 1rem;
-    color: #000000;
-    font-size: 1rem;
-    display: block;
-}
-
-.profile-link {
-    color: #0d6efd;
-}
-.border-chat{
-    border-right-width: 3px !important;
-}
-.logout-text {
-    color: #0d6efd;
-    background: none;
-    border: none;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    text-decoration: none;
-    cursor: pointer;
-    display: block;
-}
-
-
-.navbar-toggler {
-    border: 2px solid #0d6efd;
-    border-radius: 4px;
-    padding: 0.25rem 0.75rem;
-}
-
-.navbar-toggler:hover {
-    border-color: #0a58ca;
 }

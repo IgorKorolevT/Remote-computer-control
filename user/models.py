@@ -5,3 +5,8 @@ from django.db import models
 class User(AbstractUser):
     channel_name = models.CharField(unique=True, null=True, blank=True)
     friends = models.ManyToManyField("self", blank=True)
+
+    def __str__(self):
+        return f"{self.username}"
+
+    def get_

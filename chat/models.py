@@ -16,6 +16,7 @@ class Computer(models.Model):
         return f"{self.name}"
 
 
+
 class Room(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, default=uuid.uuid4)
