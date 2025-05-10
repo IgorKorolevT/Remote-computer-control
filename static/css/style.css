@@ -6,3 +6,17 @@
 .chat__item__container{
     height: 300px;
 }
+
+.my_message{
+  background-color: rgb(255 223 185);
+}
+
+.not_my_message {
+    background-color: rgb(230 215 255);
+}
+
+.message{
+    border-radius: 30px;
+    max-width: 70%;
+    overflow: auto;
+}

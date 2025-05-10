@@ -38,7 +38,7 @@ def create_message(text: str, sender: UserComputer, recipient: UserComputer = No
     return message
 
 
-def get_datetime(timestamp: T_timestamp) -> datetime:
+def get_datetime(timestamp: T_timestamp | str) -> datetime:
     """Convert str to datetime or create datetime that need in fild timestamp"""
     if isinstance(timestamp, str):
         return datetime.fromisoformat(timestamp)
@@ -49,18 +49,21 @@ def get_datetime(timestamp: T_timestamp) -> datetime:
     else:
         raise TypeError
 
+
 async def acreate_message(text: str, sender: UserComputer, recipient: UserComputer = None, recipient_room: Room = None,
-                   timestamp: T_timestamp = None) -> Message:
+                          timestamp: T_timestamp = None) -> Message:
     """Create async message.html and return it"""
     message = await sync_to_async(create_message)(text, sender, recipient, recipient_room, timestamp)
     return message
+
 
 def _m_friend(user: User, friend: User) -> QuerySet:
     """Return sent and received messages from friend"""
     messages = Message.objects.filter(
         Q(sender_user=user, recipient_user=friend) | Q(sender_user=friend, recipient_user=user)
-    ).select_related("sender_user", "recipient_user").order_by('timestamp')
+    ).select_related("sender_user").order_by('timestamp')
     return messages
+
 
 def friend_context(user: User, chosen_friend: User) -> Dict[str, QuerySet | User]:
     """Get sent and received messages from chosen_friend. And return context dict"""
@@ -75,6 +78,23 @@ def friend_context(user: User, chosen_friend: User) -> Dict[str, QuerySet | User
     }
     return context
 
-def computer_context(self: User, chosen_computer: Computer) -> Dict[str, QuerySet | User]:
+
+def _m_computer(user: User, computer: Computer) -> QuerySet:
+    """Return sent and received messages from computer"""
+    messages = Message.objects.filter(
+        Q(sender_user=user, recipient_computer=computer) | Q(sender_computer=computer, recipient_user=user)
+    ).select_related("sender_user", "sender_computer").order_by('timestamp')
+    return messages
+
+
+def computer_context(user: User, chosen_computer: Computer) -> Dict[str, QuerySet | User]:
     """Get sent and received messages from chosen_computer. And return context dict"""
-    return {}
+    if not isinstance(chosen_computer, Computer):
+        raise TypeError("computer must be type Computer")
+
+    messages = _m_computer(user, chosen_computer)
+    context = {
+        "chosen_computer": chosen_computer,
+        "messages": messages,
+    }
+    return context

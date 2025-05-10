@@ -1,9 +1,11 @@
 <div class="d-flex flex-column h-100">
     <h3 class="m-0 p-3 border-bottom bg-light">{{ name }}</h3>
     <div class="chat__item__container flex-grow-1 p-3 overflow-auto" id="id_chat_item_container">
+        {% block history %}
             {% for message in messages %}
                 {% include 'includes/message.html' with message=message %}
             {% endfor %}
+        {% endblock %}
     </div>
     <div class="p-3 border-top bg-light">
         <div class="input-group">

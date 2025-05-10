@@ -33,15 +33,16 @@ class ChatFriendConsumer(ChatConsumer):
         if receiver_user:
             m = await acreate_message(text=message, sender=self.user, recipient=receiver_user, timestamp=timestamp)
         if receiver_user and receiver_user.channel_name:
-            context = {"message": message, "date": str(m.timestamp), "sender": self.user.username,
-                       "type": "user_private_message"}
+            context = {"message": message, "date": str(m.timestamp.strftime("%b %d, %Y, %I:%M %p")), "sender": self.user.username,
+                       "type": "friend_message"}
             await self.channel_layer.send(receiver_user.channel_name, context)
 
-    async def user_private_message(self, event):
+    async def friend_message(self, event):
         message = event["message"]
         sender = event["sender"]
         # TODO: date
         time_send = event["date"]
+        print(time_send)
         data = json.dumps({"message": message, "sender": sender, "date": time_send})
         await self.send(text_data=data)
 
@@ -71,6 +72,9 @@ class ChatComputerConsumer(ChatConsumer):
         time_send = str(datetime.now())
         data = json.dumps({"message": message, "sender": sender, "date": time_send})
         await self.send(text_data=data)
+
+    async def friend_message(self, event):
+        pass
 
 
 class ComputerConsumer(AsyncWebsocketConsumer):
