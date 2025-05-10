@@ -3,6 +3,8 @@ from typing import Union
 from asgiref.sync import sync_to_async
 from user.models import User
 from chat.models import Computer, Room, Message
+from django.db.models import QuerySet, Q
+from typing import Dict
 
 type UserComputer = Union[User, Computer]
 type T_timestamp = Union[datetime, str]
@@ -10,7 +12,7 @@ type T_timestamp = Union[datetime, str]
 
 def create_message(text: str, sender: UserComputer, recipient: UserComputer = None, room: Room = None,
                    timestamp: T_timestamp = None) -> Message:
-    """Create message and return it"""
+    """Create message.html and return it"""
     sender_user, sender_computer, recipient_user, recipient_computer, recipient_room = None, None, None, None, None
 
     if not room and not recipient:
@@ -49,6 +51,30 @@ def get_datetime(timestamp: T_timestamp) -> datetime:
 
 async def acreate_message(text: str, sender: UserComputer, recipient: UserComputer = None, recipient_room: Room = None,
                    timestamp: T_timestamp = None) -> Message:
-    """Create async message and return it"""
+    """Create async message.html and return it"""
     message = await sync_to_async(create_message)(text, sender, recipient, recipient_room, timestamp)
     return message
+
+def _m_friend(user: User, friend: User) -> QuerySet:
+    """Return sent and received messages from friend"""
+    messages = Message.objects.filter(
+        Q(sender_user=user, recipient_user=friend) | Q(sender_user=friend, recipient_user=user)
+    ).select_related("sender_user", "recipient_user").order_by('timestamp')
+    return messages
+
+def friend_context(user: User, chosen_friend: User) -> Dict[str, QuerySet | User]:
+    """Get sent and received messages from chosen_friend. And return context dict"""
+
+    if not isinstance(chosen_friend, User):
+        raise TypeError("chosen_friend must be type User")
+
+    messages = _m_friend(user, chosen_friend)
+    context = {
+        "chosen_friend": chosen_friend,
+        "messages": messages,
+    }
+    return context
+
+def computer_context(self: User, chosen_computer: Computer) -> Dict[str, QuerySet | User]:
+    """Get sent and received messages from chosen_computer. And return context dict"""
+    return {}

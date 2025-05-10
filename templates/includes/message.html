@@ -1,0 +1,11 @@
+<div class="mb-2 p-2 rounded bg-light border border-secondary text-dark ms-auto "
+     style="max-width: 70%;">
+    {% if message.get_sender.username == user.username %}
+        <strong>You</strong>
+    {% else %}
+        <strong>{{ message.get_sender.username }}</strong>
+    {% endif %}
+    {{ message.text }}
+    <br>
+    <small class="text-muted">{{ message.timestamp }}</small>
+</div>
