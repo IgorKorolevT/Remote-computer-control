@@ -8,3 +8,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.username}"
+
+    # def get_message_from_friend(self, friend: "User"):
+    #     self.received_messages.filter()
