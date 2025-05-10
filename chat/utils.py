@@ -38,7 +38,7 @@ def create_message(text: str, sender: UserComputer, recipient: UserComputer = No
     return message
 
 
-def get_datetime(timestamp: T_timestamp | str) -> datetime:
+def get_datetime(timestamp: T_timestamp) -> datetime:
     """Convert str to datetime or create datetime that need in fild timestamp"""
     if isinstance(timestamp, str):
         return datetime.fromisoformat(timestamp)
