@@ -25,4 +25,4 @@ class UserDetailView(generic.DetailView):
 
 
 def index(request: HttpRequest) -> HttpResponse:
-    return render(request, "base.html")
+    return render(request, "home.html")
