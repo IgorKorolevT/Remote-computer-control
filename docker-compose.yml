@@ -1,0 +1,31 @@
+services:
+  app:
+    build: .
+    command: >
+      sh -c "python manage.py collectstatic --noinput &&
+             uv run daphne -b 0.0.0.0 -p 8000 Django_course_project.asgi:application"
+    volumes:
+      - static_data:/app/staticfiles
+      - media_data:/app/media
+    environment:
+      - DJANGO_SETTINGS_MODULE=Django_course_project.settings
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - static_data:/app/staticfiles
+      - media_data:/app/media
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+
+volumes:
+  static_data:
+  media_data:

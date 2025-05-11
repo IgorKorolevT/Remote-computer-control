@@ -24,8 +24,8 @@ SECRET_KEY = 'django-insecure-j$5plbwqw2*4kvkrgbha$o4ac_-46q=%u%bm4uve-4az577b!!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["34.169.244.15"]
-# ALLOWED_HOSTS =  ["127.0.0.1", "localhost", "192.168.50.16"]  # "127.0.0.1", "localhost"
+ALLOWED_HOSTS = ["34.169.244.15", "localhost", "127.0.0.1"]
+# ALLOWED_HOSTS =  ["127.0.0.1", "localhost"]
 
 # Application definition
 
@@ -118,7 +118,9 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
-STATIC_ROOT = "django_course_project.com/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_URL = '/media/'
+MEDIA_ROOT = '/app/media/'
 
 # MEDIA_ROOT = BASE_DIR / "media"
 # MEDIA_URL = "media/"
@@ -136,16 +138,16 @@ LOGIN_REDIRECT_URL = "user:home"
 LOGOUT_URL = "user:logout"
 LOGOUT_REDIRECT_URL = "user:login"
 
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "channels_redis.core.RedisChannelLayer",
-#         "CONFIG": {
-#             "hosts": [("127.0.0.1", 6379)],
-#         },
-#     },
-# }
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    }
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
+    },
 }
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer",
+#     }
+# }
