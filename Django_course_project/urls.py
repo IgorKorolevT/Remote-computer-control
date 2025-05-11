@@ -20,7 +20,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-                  path('admin/', admin.site.urls, name='admin'),
-                  path("chat/", include("chat.urls"), name="chat"),
-                  path("", include("user.urls"), name="user"),
-              ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path('admin/', admin.site.urls, name='admin'),
+    path("chat/", include("chat.urls"), name="chat"),
+    path("", include("user.urls"), name="user"),
+]
+# + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))
