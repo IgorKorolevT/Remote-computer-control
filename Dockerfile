@@ -27,4 +27,4 @@ ENV PATH="/app/.venv/bin:$PATH"
 CMD ["uv", "run" , "manage.py", "collectstatic", "--noinput"]
 # Command to run the application
 #CMD ["uv", "run", "daphne", "-b", "0.0.0.0", "-p", "8000", "Django_course_project.asgi:application"]
-CMD ["uv", "run", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["uv", "run", "manage.py", "runserver", "0.0.0.0:80"]
