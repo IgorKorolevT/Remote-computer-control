@@ -28,7 +28,7 @@ services:
       - ./cert.pem:/etc/nginx/ssl/cert.pem
       - ./key.pem:/etc/nginx/ssl/key.pem
     environment:
-      - SSL_KEY_PASSPHRASE="tulen and tulen"
+      - SSL_KEY_PASSPHRASE="Tulen and Tulen"
     depends_on:
       - web
 
