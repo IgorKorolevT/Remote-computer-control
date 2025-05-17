@@ -1,5 +1,5 @@
 function create_socket(url, receiver) {
-    const chatSocket = new WebSocket("ws://" + window.location.host + url);
+    const chatSocket = new WebSocket("wss://" + window.location.host + url);
     chatSocket.onopen = function (e) {
         console.log('The connection was setup successfully !');
     };
