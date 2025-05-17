@@ -25,6 +25,7 @@ services:
       - static:/app/staticfiles
       - media:/app/media
       - ./nginx.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt/:/etc/letsencrypt/
     depends_on:
       - web
 
