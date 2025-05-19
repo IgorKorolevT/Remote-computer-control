@@ -73,6 +73,6 @@ def computer_context(user: User, chosen_computer: Computer) -> Dict[str, QuerySe
     messages = _m_computer(user, chosen_computer)
     context = {
         "chosen_computer": chosen_computer,
-        "messages": messages,
+        "notifications": messages,
     }
     return context

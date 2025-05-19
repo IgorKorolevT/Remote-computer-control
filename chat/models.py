@@ -12,7 +12,6 @@ class Computer(models.Model):
     password = models.CharField()
     users = models.ManyToManyField(get_user_model(), related_name='computers')
     channel_name = models.CharField(unique=True, null=True, blank=True)
-    _salt = models.CharField()
 
     def __str__(self):
         return f"{self.name}"

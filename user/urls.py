@@ -10,4 +10,5 @@ urlpatterns = [
     path("register/", views.register_new_user, name="register"),
     path("profile/<int:pk>/", views.UserDetailView.as_view(), name="profile"),
     path("", views.index, name="home"),
+    path("add/computers/", views.add_pk, name="add_computer"),
 ]

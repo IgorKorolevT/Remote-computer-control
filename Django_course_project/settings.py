@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from django.contrib.messages import constants
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-j$5plbwqw2*4kvkrgbha$o4ac_-46q=%u%bm4uve-4az577b!!
 DEBUG = True
 
 # ALLOWED_HOSTS = ["34.169.244.15"]
-ALLOWED_HOSTS =  ["127.0.0.1", "localhost", "192.168.50.16"]  # "127.0.0.1", "localhost"
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "192.168.50.16"]  # "127.0.0.1", "localhost"
 
 # Application definition
 
@@ -99,6 +100,14 @@ DATABASES = {
 #         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
 #     },
 # ]
+
+# Messages
+
+
+MESSAGE_TAGS = {
+    constants.ERROR: "danger",
+    constants.SUCCESS: "primary",
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/

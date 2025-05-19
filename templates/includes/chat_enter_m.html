@@ -2,8 +2,8 @@
     <h3 class="m-0 p-3 border-bottom bg-light">{{ name }}</h3>
     <div class="chat__item__container flex-grow-1 p-3 overflow-auto" id="id_chat_item_container">
         {% block history %}
-            {% for message in messages %}
-                {% include 'includes/message.html' with message=message %}
+            {% for notification in notifications %}
+                {% include 'includes/notification.html' with notification=notification %}
             {% endfor %}
         {% endblock %}
     </div>

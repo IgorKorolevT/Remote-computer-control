@@ -22,7 +22,6 @@ def get_base_context(user: User) -> Dict[str, Union[Computer, User]]:
 @login_required
 def chat(request: HttpRequest) -> HttpResponse:
     user = request.user
-
     context = get_base_context(user)
     return render(request, "chat/chat.html", context)
 
