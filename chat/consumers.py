@@ -61,8 +61,8 @@ class ComputerConsumer(AsyncWebsocketConsumer):
                 await self.close()  # TODO: code close connection
             if pk.check_password(password) is False:
                 await self.close()  # TODO: code close connection
-            await self._set_channel_name(self.channel_name)
             self.pk = pk
+            await self._set_channel_name(self.channel_name)
             await self.accept()
         else:
             await self.close() # TODO: code close connection
