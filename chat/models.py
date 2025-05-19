@@ -2,6 +2,7 @@ import uuid
 
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password, check_password
 
 
 # Create your models here.
@@ -11,10 +12,18 @@ class Computer(models.Model):
     password = models.CharField()
     users = models.ManyToManyField(get_user_model(), related_name='computers')
     channel_name = models.CharField(unique=True, null=True, blank=True)
+    _salt = models.CharField()
 
     def __str__(self):
         return f"{self.name}"
 
+    def set_password(self, raw_password: str):
+        """Set the password"""
+        self.password = make_password(raw_password)
+
+    def check_password(self, raw_password: str) -> bool:
+        """Verify the provided password"""
+        return check_password(raw_password, self.password)
 
 
 class Room(models.Model):
@@ -31,11 +40,13 @@ class Room(models.Model):
 class Message(models.Model):
     text = models.TextField(max_length=500)  # change max_length
     timestamp = models.DateTimeField(auto_now_add=True)
-    sender_user = models.ForeignKey(get_user_model(), related_name='sent_messages', on_delete=models.CASCADE, null=True, blank=True)
+    sender_user = models.ForeignKey(get_user_model(), related_name='sent_messages', on_delete=models.CASCADE, null=True,
+                                    blank=True)
     sender_computer = models.ForeignKey(Computer, related_name='sent_messages', on_delete=models.CASCADE, null=True,
                                         blank=True)
     room = models.ForeignKey(Room, related_name='messages', on_delete=models.CASCADE, null=True, blank=True)
-    recipient_user = models.ForeignKey(get_user_model(), related_name='received_messages', on_delete=models.CASCADE, null=True,
+    recipient_user = models.ForeignKey(get_user_model(), related_name='received_messages', on_delete=models.CASCADE,
+                                       null=True,
                                        blank=True)
     recipient_computer = models.ForeignKey(Computer, related_name='received_messages', on_delete=models.CASCADE,
                                            null=True, blank=True)

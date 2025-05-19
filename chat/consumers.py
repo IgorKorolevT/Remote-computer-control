@@ -49,9 +49,6 @@ class ChatComputerConsumer(ChatConsumer):
         data = json.dumps({"message": message, "sender": sender, "date": time_send})
         await self.send(text_data=data)
 
-    async def friend_message(self, event):
-        pass
-
 
 class ComputerConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -59,18 +56,19 @@ class ComputerConsumer(AsyncWebsocketConsumer):
         name, password = headers.get(b"name"), headers.get(b"password")
         if name and password:
             name, password = name.decode(), password.decode()
-            pk = await sync_to_async(Computer.objects.filter(name=name, password=password).first)()
-            if pk:
-                pk.channel_name = self.channel_name
-                await sync_to_async(pk.save)()
-                self.pk = pk
-                await self.accept()
-                return
-        await self.close()
+            pk = await sync_to_async(Computer.objects.filter(name=name).first)()
+            if pk is None:
+                await self.close()  # TODO: code close connection
+            if pk.check_password(password) is False:
+                await self.close()  # TODO: code close connection
+            await self._set_channel_name(self.channel_name)
+            self.pk = pk
+            await self.accept()
+        else:
+            await self.close() # TODO: code close connection
 
     async def disconnect(self, close_code):
-        self.pk.channel_name = None
-        await sync_to_async(self.pk.save)()
+        await self._set_channel_name(None)
 
     async def receive(self, text_data: str = None, bytes_data=None):
         data = json.loads(text_data)
@@ -92,3 +90,7 @@ class ComputerConsumer(AsyncWebsocketConsumer):
         user_id = event["user_id"]
         data = json.dumps({"message": message, "user_id": user_id})
         await self.send(text_data=data)
+
+    async def _set_channel_name(self, channel_name: None | str):
+        self.pk.channel_name = channel_name
+        await sync_to_async(self.pk.save)()
