@@ -23,29 +23,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await sync_to_async(self.user.save)()
 
 
-class ChatFriendConsumer(ChatConsumer):
-    async def receive(self, text_data: str = None, bytes_data=None):
-        data = json.loads(text_data)
-        message = data["message"]
-        username = data["receiver"]
-        timestamp = data["date"]
-        receiver_user = await sync_to_async(User.objects.get)(username=username)
-        if receiver_user:
-            m = await acreate_message(text=message, sender=self.user, recipient=receiver_user, timestamp=timestamp)
-        if receiver_user and receiver_user.channel_name:
-            context = {"message": message, "date": m.timestamp.strftime("%b %d, %Y, %I:%M %p"), "sender": self.user.username,
-                       "type": "friend_message"} #TODO: strftime in another func
-            await self.channel_layer.send(receiver_user.channel_name, context)
-
-    async def friend_message(self, event):
-        message = event["message"]
-        sender = event["sender"]
-        time_send = event["date"]
-        print(time_send)
-        data = json.dumps({"message": message, "sender": sender, "date": time_send})
-        await self.send(text_data=data)
-
-
 class ChatComputerConsumer(ChatConsumer):
     async def receive(self, text_data: str = None, bytes_data=None):
         data = json.loads(text_data)

@@ -57,28 +57,6 @@ async def acreate_message(text: str, sender: UserComputer, recipient: UserComput
     return message
 
 
-def _m_friend(user: User, friend: User) -> QuerySet:
-    """Return sent and received messages from friend"""
-    messages = Message.objects.filter(
-        Q(sender_user=user, recipient_user=friend) | Q(sender_user=friend, recipient_user=user)
-    ).select_related("sender_user").order_by('timestamp')
-    return messages
-
-
-def friend_context(user: User, chosen_friend: User) -> Dict[str, QuerySet | User]:
-    """Get sent and received messages from chosen_friend. And return context dict"""
-
-    if not isinstance(chosen_friend, User):
-        raise TypeError("chosen_friend must be type User")
-
-    messages = _m_friend(user, chosen_friend)
-    context = {
-        "chosen_friend": chosen_friend,
-        "messages": messages,
-    }
-    return context
-
-
 def _m_computer(user: User, computer: Computer) -> QuerySet:
     """Return sent and received messages from computer"""
     messages = Message.objects.filter(
