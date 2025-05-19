@@ -30,16 +30,16 @@ class ChatComputerConsumer(ChatConsumer):
         message = data["message"]
         pk_name = data["receiver"]
         timestamp = data["date"]
-        pk = await sync_to_async(Computer.objects.filter(name=pk_name).first)()
-        if pk:
-            await acreate_message(text=message, sender=self.user, recipient=pk, timestamp=timestamp)
-        if pk and pk.channel_name:
-            context = {"message": message, "user_id": self.user.id,
-                       "type": "pk_private_message"}
-            await self.channel_layer.send(pk.channel_name, context)
-        else:
-            # TODO : Error
-            pass
+        try:
+            pk = await sync_to_async(Computer.objects.get)(name=pk_name)
+            if pk:
+                await acreate_message(text=message, sender=self.user, recipient=pk, timestamp=timestamp)
+            if pk and pk.channel_name:
+                context = {"message": message, "user_id": self.user.id,
+                           "type": "pk_private_message"}
+                await self.channel_layer.send(pk.channel_name, context)
+        except Computer.DoesNotExist:
+            pass # TODO: send message that this computer doesn't exist
 
     async def user_private_message(self, event):
         message = event["message"]
@@ -56,16 +56,18 @@ class ComputerConsumer(AsyncWebsocketConsumer):
         name, password = headers.get(b"name"), headers.get(b"password")
         if name and password:
             name, password = name.decode(), password.decode()
-            pk = await sync_to_async(Computer.objects.filter(name=name).first)()
-            if pk is None:
-                await self.close()  # TODO: code close connection
-            if pk.check_password(password) is False:
-                await self.close()  # TODO: code close connection
-            self.pk = pk
-            await self._set_channel_name(self.channel_name)
-            await self.accept()
+            try:
+                pk = await sync_to_async(Computer.objects.get)(name=name)
+                if not pk.check_password(password):
+                    await self.close()
+                self.pk = pk
+                await self._set_channel_name(self.channel_name)
+                await self.accept()
+            except Computer.DoesNotExist:
+                await self.close()
+
         else:
-            await self.close() # TODO: code close connection
+            await self.close(code=401)
 
     async def disconnect(self, close_code):
         await self._set_channel_name(None)
@@ -77,8 +79,8 @@ class ComputerConsumer(AsyncWebsocketConsumer):
 
         try:
             user = await sync_to_async(User.objects.get)(pk=user_id)
-        except Exception as e:  # TODO: replace to more suitable Error DoesNotExist
-            print(e)
+        except User.DoesNotExist as e:
+            pass #TODO: send message that user id isn't correct
         else:
             message = await acreate_message(text=text, sender=self.pk, recipient=user, timestamp=data.get("date"))
             if user.channel_name:
