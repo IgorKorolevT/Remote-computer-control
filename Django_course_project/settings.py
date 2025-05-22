@@ -140,10 +140,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # User Model
 AUTH_USER_MODEL = 'user.User'
-LOGIN_URL = "user:login"
+LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "user:home"
-LOGOUT_URL = "user:logout"
-LOGOUT_REDIRECT_URL = "user:login"
+LOGOUT_URL = "logout"
+LOGOUT_REDIRECT_URL = "login"
 
 # CHANNEL_LAYERS = {
 #     "default": {

@@ -1,6 +1,6 @@
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.views import generic
 from django.contrib import messages
@@ -10,7 +10,7 @@ from .models import User
 
 
 # Create your views here.
-def register_new_user(request: HttpRequest) -> HttpResponse:
+def register_user(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = UserForm(request.POST)
         if form.is_valid():
@@ -22,9 +22,9 @@ def register_new_user(request: HttpRequest) -> HttpResponse:
 
     return render(request, "user/register_user.html", {"form": form})
 
-
-class UserDetailView(generic.DetailView):
-    model = User
+@login_required()
+def profile(request: HttpRequest) -> HttpResponse:
+    return render(request, "user/profile.html")
 
 
 def index(request: HttpRequest) -> HttpResponse:

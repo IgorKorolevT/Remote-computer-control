@@ -36,7 +36,7 @@
                         <p class="card-text">
                             <strong>Date Joined:</strong>
                             {% if user.date_joined %}
-                                {{ user.date_joined|date:"F d, Y H:i" }}
+                                {{ user.date_joined }}
                             {% else %}
                                 Unknown
                             {% endif %}
@@ -44,7 +44,7 @@
                         <p class="card-text">
                             <strong>Last Login:</strong>
                             {% if user.last_login %}
-                                {{ user.last_login|date:"F d, Y H:i" }}
+                                {{ user.last_login}}
                             {% else %}
                                 Never logged in
                             {% endif %}
@@ -58,6 +58,7 @@
                 {% if user.is_superuser %}
                     <a href="{% url 'admin:index' %}" class="btn btn-secondary">Admin</a>
                 {% endif %}
+                <a href="{% url 'password_change' %}" class="btn btn-secondary">Change password</a>
             </div>
         </div>
     </div>
