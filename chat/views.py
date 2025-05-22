@@ -30,7 +30,8 @@ def chat(request: HttpRequest) -> HttpResponse:
 def chat_computer(request: HttpRequest, name: str) -> HttpResponse:
     user = request.user
     context = get_base_context(user)
-    chosen_computer = get_object_or_404(user.computers, name=name)
+    computers = context["computers"]
+    chosen_computer = get_object_or_404(computers, name=name)
     context_m = computer_context(user, chosen_computer)
     context.update(context_m)
     return render(request, "chat/chat_computer.html", context)

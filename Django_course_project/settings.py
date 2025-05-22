@@ -41,10 +41,12 @@ INSTALLED_APPS = [
     "channels",
     "chat",
     "user",
+    "debug_toolbar"
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -157,6 +159,11 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
     }
 }
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+    "192.168.50.16"
+]
 
 # https://docs.djangoproject.com/en/5.1/topics/email/#defining-a-custom-email-backend
 DEFAULT_FROM_EMAIL = "admin@admin.admin"

@@ -89,7 +89,7 @@ def _m_computer(user: User, computer: Computer) -> QuerySet:
             Q(sender_user=user, recipient_computer=computer)
             | Q(sender_computer=computer, recipient_user=user)
         )
-        .select_related("sender_user", "sender_computer")
+        .select_related("sender_user", "sender_computer").only("sender_user__username", "sender_computer__name", "timestamp", "text")
         .order_by("timestamp")
     )
     return messages

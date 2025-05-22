@@ -1,10 +1,10 @@
 <div
-        {% if notification.get_sender.username == user.username %}
+        {% if notification.get_sender.id == user.id %}
             class="mb-2 p-2 border border-secondary text-dark ms-auto message my_message"
         {% else %}
             class="mb-2 p-2 border border-secondary text-dark me-auto message not_my_message"
         {% endif %}>
-    {% if notification.get_sender.username == user.username %}
+    {% if notification.get_sender.id == user.id %}
         <strong>You</strong>
     {% else %}
         <strong>{{ notification.get_sender.username }}</strong>
