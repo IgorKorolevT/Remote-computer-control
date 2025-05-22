@@ -19,10 +19,11 @@ class UserUpdateForm(UserChangeForm):
 
 
 class ComputerAddForm(forms.Form):
-    name = forms.CharField(required=True,
-                           label="Computer Name",
-                           help_text="Enter the name of the computer.",
-                           )
+    name = forms.CharField(
+        required=True,
+        label="Computer Name",
+        help_text="Enter the name of the computer.",
+    )
     password = forms.CharField(
         widget=forms.PasswordInput,
         required=True,

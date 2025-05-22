@@ -11,7 +11,7 @@ from user.models import User
 # Create your views here.
 def get_base_context(user: User) -> Dict[str, Union[Computer, User]]:
     """Generate base context
-     return {"computers": ...,}"""
+    return {"computers": ...,}"""
     computers = user.computers.all()
     context = {
         "computers": computers,

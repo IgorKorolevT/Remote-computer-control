@@ -5,15 +5,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('user', '0002_user_channel_name'),
+        ("user", "0002_user_channel_name"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='friends',
+            model_name="user",
+            name="friends",
             field=models.ManyToManyField(blank=True, to=settings.AUTH_USER_MODEL),
         ),
     ]

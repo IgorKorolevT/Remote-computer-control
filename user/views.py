@@ -12,10 +12,11 @@ from .forms import UserForm, ComputerAddForm, UserUpdateForm
 
 # Create your views here.
 
+
 class UserCreateView(CreateView):
     form_class = UserForm
     model = get_user_model()
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy("login")
     template_name = "user/user_create.html"
 
 
@@ -29,8 +30,8 @@ class UserDetailView(DetailView):
 class UserUpdateView(UpdateView):
     form_class = UserUpdateForm
     model = get_user_model()
-    success_url = reverse_lazy('profile')
-    template_name = 'user/user_update.html'
+    success_url = reverse_lazy("profile")
+    template_name = "user/user_update.html"
 
     def get_object(self, queryset=None):
         return self.request.user
@@ -57,8 +58,12 @@ def add_pk(request: HttpRequest) -> HttpResponse:
                 pk = Computer.objects.get(name=form.cleaned_data["name"])
                 if pk.check_password(form.cleaned_data["password"]):
                     pk.users.add(request.user)
-                    return redirect("chat:chat_computers", name=form.cleaned_data["name"])
-                messages.error(request, "Invalid password of computer. Please try again.")
+                    return redirect(
+                        "chat:chat_computers", name=form.cleaned_data["name"]
+                    )
+                messages.error(
+                    request, "Invalid password of computer. Please try again."
+                )
             except Computer.DoesNotExist:
                 messages.error(request, "Invalid name of computer. Please try again.")
     else:

@@ -33,13 +33,18 @@ class ChatComputerConsumer(ChatConsumer):
         try:
             pk = await sync_to_async(Computer.objects.get)(name=pk_name)
             if pk:
-                await acreate_message(text=message, sender=self.user, recipient=pk, timestamp=timestamp)
+                await acreate_message(
+                    text=message, sender=self.user, recipient=pk, timestamp=timestamp
+                )
             if pk and pk.channel_name:
-                context = {"message": message, "user_id": self.user.id,
-                           "type": "pk_private_message"}
+                context = {
+                    "message": message,
+                    "user_id": self.user.id,
+                    "type": "pk_private_message",
+                }
                 await self.channel_layer.send(pk.channel_name, context)
         except Computer.DoesNotExist:
-            pass # TODO: send message that this computer doesn't exist
+            pass  # TODO: send message that this computer doesn't exist
 
     async def user_private_message(self, event):
         message = event["message"]
@@ -79,12 +84,16 @@ class ComputerConsumer(AsyncWebsocketConsumer):
 
         try:
             user = await sync_to_async(User.objects.get)(pk=user_id)
-        except User.DoesNotExist as e:
-            pass #TODO: send message that user id isn't correct
+        except User.DoesNotExist:
+            pass  # TODO: send message that user id isn't correct
         else:
-            message = await acreate_message(text=text, sender=self.pk, recipient=user, timestamp=data.get("date"))
+            # message = await acreate_message(text=text, sender=self.pk, recipient=user, timestamp=data.get("date"))
             if user.channel_name:
-                context = {"message": text, "sender": self.pk.nickname, "type": "user_private_message"}
+                context = {
+                    "message": text,
+                    "sender": self.pk.nickname,
+                    "type": "user_private_message",
+                }
                 await self.channel_layer.send(user.channel_name, context)
 
     async def pk_private_message(self, event):
