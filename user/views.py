@@ -1,12 +1,13 @@
-from django.contrib.auth import login
+from django.contrib.auth import login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse, Http404
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
-from django.views import generic
 from django.contrib import messages
+from django.urls import reverse_lazy
+from django.views.generic import DeleteView
+
 from chat.models import Computer
-from .forms import UserForm, ContactForm
-from .models import User
+from .forms import UserForm, ComputerAddForm, UserUpdateForm
 
 
 # Create your views here.
@@ -22,18 +23,36 @@ def register_user(request: HttpRequest) -> HttpResponse:
 
     return render(request, "user/register_user.html", {"form": form})
 
+
 @login_required()
 def profile(request: HttpRequest) -> HttpResponse:
     return render(request, "user/profile.html")
 
 
+@login_required()
+def user_update(request: HttpRequest) -> HttpResponse:
+    user_form = UserUpdateForm(request.POST or None, instance=request.user)
+    if user_form.is_valid():
+        user_form.save()
+        messages.success(request, "Your account has been updated!")
+        return redirect("user:profile")
+    return render(request, "user/user_update.html", {"form": user_form})
+
+
+class UserDeleteView(DeleteView):
+    model = get_user_model()
+    success_url = reverse_lazy("login")
+
+    def get_object(self, queryset=None):
+        return self.request.user
 def index(request: HttpRequest) -> HttpResponse:
     return render(request, "home.html")
+
 
 @login_required
 def add_pk(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
-        form = ContactForm(request.POST)
+        form = ComputerAddForm(request.POST)
         if form.is_valid():
             try:
                 pk = Computer.objects.get(name=form.cleaned_data["name"])
@@ -44,5 +63,5 @@ def add_pk(request: HttpRequest) -> HttpResponse:
             except Computer.DoesNotExist:
                 messages.error(request, "Invalid name of computer. Please try again.")
     else:
-        form = ContactForm()
+        form = ComputerAddForm()
     return render(request, "add/computer.html", {"form": form})

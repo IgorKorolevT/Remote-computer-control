@@ -58,8 +58,10 @@
                 {% if user.is_superuser %}
                     <a href="{% url 'admin:index' %}" class="btn btn-secondary">Admin</a>
                 {% endif %}
-                <a href="{% url 'password_change' %}" class="btn btn-secondary">Change password</a>
+                <a href="{% url 'user:update_user' %}" class="btn btn-outline-primary">Update user</a>
+                <a href="{% url 'password_change' %}" class="btn btn-outline-primary">Change password</a>
                 <a href="{% url 'password_reset' %}" class="btn btn-outline-primary">Reset password</a>
+                <a href="{% url 'user:delete_user' %}" class="btn btn-outline-danger">Delete</a>
             </div>
         </div>
     </div>
