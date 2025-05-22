@@ -1,50 +1,49 @@
-from django.contrib.auth import login, logout, get_user_model
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.urls import reverse_lazy
-from django.views.generic import DeleteView
+from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
 
 from chat.models import Computer
 from .forms import UserForm, ComputerAddForm, UserUpdateForm
 
 
 # Create your views here.
-def register_user(request: HttpRequest) -> HttpResponse:
-    if request.method == "POST":
-        form = UserForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect("user:home")
-    else:
-        form = UserForm()
 
-    return render(request, "user/register_user.html", {"form": form})
+class UserCreateView(CreateView):
+    form_class = UserForm
+    model = get_user_model()
+    success_url = reverse_lazy('login')
+    template_name = "user/user_create.html"
 
 
-@login_required()
-def profile(request: HttpRequest) -> HttpResponse:
-    return render(request, "user/profile.html")
+class UserDetailView(DetailView):
+    model = get_user_model()
+
+    def get_object(self, queryset=None):
+        return self.request.user
 
 
-@login_required()
-def user_update(request: HttpRequest) -> HttpResponse:
-    user_form = UserUpdateForm(request.POST or None, instance=request.user)
-    if user_form.is_valid():
-        user_form.save()
-        messages.success(request, "Your account has been updated!")
-        return redirect("user:profile")
-    return render(request, "user/user_update.html", {"form": user_form})
+class UserUpdateView(UpdateView):
+    form_class = UserUpdateForm
+    model = get_user_model()
+    success_url = reverse_lazy('profile')
+    template_name = 'user/user_update.html'
+
+    def get_object(self, queryset=None):
+        return self.request.user
 
 
 class UserDeleteView(DeleteView):
     model = get_user_model()
-    success_url = reverse_lazy("login")
+    success_url = reverse_lazy("user:register")
 
     def get_object(self, queryset=None):
         return self.request.user
+
+
 def index(request: HttpRequest) -> HttpResponse:
     return render(request, "home.html")
 
