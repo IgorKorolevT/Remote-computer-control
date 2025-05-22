@@ -44,7 +44,7 @@
                         <p class="card-text">
                             <strong>Last Login:</strong>
                             {% if user.last_login %}
-                                {{ user.last_login}}
+                                {{ user.last_login }}
                             {% else %}
                                 Never logged in
                             {% endif %}
@@ -59,6 +59,7 @@
                     <a href="{% url 'admin:index' %}" class="btn btn-secondary">Admin</a>
                 {% endif %}
                 <a href="{% url 'password_change' %}" class="btn btn-secondary">Change password</a>
+                <a href="{% url 'password_reset' %}" class="btn btn-outline-primary">Reset password</a>
             </div>
         </div>
     </div>
