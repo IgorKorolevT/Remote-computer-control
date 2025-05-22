@@ -7,7 +7,7 @@
     {% if notification.get_sender.id == user.id %}
         <strong>You</strong>
     {% else %}
-        <strong>{{ notification.get_sender.username }}</strong>
+        <strong>{{ notification.get_sender.name }}</strong>
     {% endif %}
     : {{ notification.text }}
     <br>

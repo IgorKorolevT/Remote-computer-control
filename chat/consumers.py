@@ -1,9 +1,8 @@
 import json
-from datetime import datetime
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from chat.models import Computer
-from chat.utils import acreate_message
+from chat.utils import acreate_message, str_time
 from user.models import User
 
 
@@ -47,12 +46,13 @@ class ChatComputerConsumer(ChatConsumer):
             pass  # TODO: send message that this computer doesn't exist
 
     async def user_private_message(self, event):
-        message = event["message"]
         sender = event["sender"]
-        # TODO: date
-        time_send = str(datetime.now())
-        data = json.dumps({"message": message, "sender": sender, "date": time_send})
-        await self.send(text_data=data)
+        name_pk = self.scope["url_route"]['kwargs']['name']
+        if sender == name_pk:
+            message = event["message"]
+            time_send = event["date"]
+            data = json.dumps({"message": message, "sender": sender, "date": time_send})
+            await self.send(text_data=data)
 
 
 class ComputerConsumer(AsyncWebsocketConsumer):
@@ -87,11 +87,12 @@ class ComputerConsumer(AsyncWebsocketConsumer):
         except User.DoesNotExist:
             pass  # TODO: send message that user id isn't correct
         else:
-            # message = await acreate_message(text=text, sender=self.pk, recipient=user, timestamp=data.get("date"))
+            ms = await acreate_message(text=text, sender=self.pk, recipient=user)
             if user.channel_name:
                 context = {
                     "message": text,
-                    "sender": self.pk.nickname,
+                    "sender": self.pk.name,
+                    "date": str_time(ms.timestamp),
                     "type": "user_private_message",
                 }
                 await self.channel_layer.send(user.channel_name, context)
