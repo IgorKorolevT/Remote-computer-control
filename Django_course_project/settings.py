@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-j$5plbwqw2*4kvkrgbha$o4ac_-46q=%u%bm4uve-4az577b!!"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 ALLOWED_HOSTS = ["www.igorkorolevcourseproject.duckdns.org", "igorkorolevcourseproject.duckdns.org", "34.169.244.15",
@@ -40,13 +40,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "channels",
     "chat",
-    "user",
-    "debug_toolbar"
+    "user"
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
