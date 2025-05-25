@@ -18,17 +18,6 @@
                         {% endfor %}
                     </ul>
                 {% endif %}
-                {% if friends %}
-                    <h4 class="mb-3">Friends:</h4>
-                    <ul class="list">
-                        {% for friend in friends %}
-                            <li class="mb-2">
-                                <a href="{% url 'chat:chat_friend' friend.username %}"
-                                   class="text-decoration-none">{{ friend.username }}</a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
             </div>
             <div class="col-sm-7">
                 {% block chat %}

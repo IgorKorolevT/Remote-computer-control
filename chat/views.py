@@ -4,19 +4,17 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from chat.models import Computer
-from chat.utils import computer_context, friend_context
+from chat.utils import computer_context
 from user.models import User
 
 
 # Create your views here.
 def get_base_context(user: User) -> Dict[str, Union[Computer, User]]:
     """Generate base context
-     return {"computers": ...,"friends": ...}"""
+    return {"computers": ...,}"""
     computers = user.computers.all()
-    friends = user.friends.all()
     context = {
         "computers": computers,
-        "friends": friends
     }
     return context
 
@@ -24,7 +22,6 @@ def get_base_context(user: User) -> Dict[str, Union[Computer, User]]:
 @login_required
 def chat(request: HttpRequest) -> HttpResponse:
     user = request.user
-
     context = get_base_context(user)
     return render(request, "chat/chat.html", context)
 
@@ -33,17 +30,8 @@ def chat(request: HttpRequest) -> HttpResponse:
 def chat_computer(request: HttpRequest, name: str) -> HttpResponse:
     user = request.user
     context = get_base_context(user)
-    chosen_computer = get_object_or_404(user.computers, name=name)
+    computers = context["computers"]
+    chosen_computer = get_object_or_404(computers, name=name)
     context_m = computer_context(user, chosen_computer)
     context.update(context_m)
     return render(request, "chat/chat_computer.html", context)
-
-
-@login_required
-def chat_friend(request, username: str) -> HttpResponse:
-    user = request.user
-    context = get_base_context(user)
-    chosen_friend = get_object_or_404(user.friends, username=username)
-    context_m = friend_context(user, chosen_friend)
-    context.update(context_m)
-    return render(request, "chat/chat_friend.html", context)

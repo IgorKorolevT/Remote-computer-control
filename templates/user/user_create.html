@@ -5,10 +5,7 @@
 
 {% block content %}
     <div class="container text-center ms-auto">
-        <form method="post">
-            {% csrf_token %}
-            {{ form }}
-            <input type="submit" value="Submit">
-        </form>
+        <h2>Register new user</h2>
+        {% include 'includes/_user_form.html' %}
     </div>
 {% endblock %}

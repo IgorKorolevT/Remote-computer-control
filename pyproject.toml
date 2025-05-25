@@ -10,3 +10,8 @@ dependencies = [
     "django>=5.2",
     "utils>=1.0.2",
 ]
+
+[dependency-groups]
+dev = [
+    "django-debug-toolbar>=5.2.0",
+]
