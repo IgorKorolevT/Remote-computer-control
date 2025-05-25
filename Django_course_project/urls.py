@@ -24,5 +24,5 @@ urlpatterns = [
                   path("chat/", include("chat.urls"), name="chat"),
                   path("", include("user.urls"), name="user"),
                   path("accounts/", include("django.contrib.auth.urls")),
-              ] + debug_toolbar_urls()
+              ]
 # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))

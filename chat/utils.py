@@ -6,6 +6,7 @@ from chat.models import Computer, Room, Message
 from django.db.models import QuerySet, Q
 from typing import Dict
 
+
 type UserComputer = Union[User, Computer]
 type T_timestamp = Union[datetime, str]
 FORMAT = "%B %d, %Y, %I:%M %p"
@@ -17,6 +18,12 @@ def create_message(
         room: Room = None,
         timestamp: T_timestamp = None,
 ) -> Message:
+UserComputer = Union[User, Computer]
+T_timestamp = Union[datetime, str]
+
+
+def create_message(text: str, sender: UserComputer, recipient: UserComputer = None, room: Room = None,
+                   timestamp: T_timestamp = None) -> Message:
     """Create message.html and return it"""
     sender_user, sender_computer, recipient_user, recipient_computer, recipient_room = (
         None,
