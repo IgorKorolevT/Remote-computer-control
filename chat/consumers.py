@@ -22,7 +22,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await sync_to_async(self.user.save)()
 
 
-class ChatComputerConsumer(ChatConsumer):
+class ChatComputerConsumer(ChatConsumer): # TODO: send user message
     async def receive(self, text_data: str = None, bytes_data=None):
         data = json.loads(text_data)
 

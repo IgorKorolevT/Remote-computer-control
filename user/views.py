@@ -16,7 +16,7 @@ from .forms import UserForm, ComputerAddForm, UserUpdateForm
 class UserCreateView(CreateView):
     form_class = UserForm
     model = get_user_model()
-    success_url = reverse_lazy("login")
+    success_url = reverse_lazy("login")  # TODO: login and reverse_to profile
     template_name = "user/user_create.html"
 
 
@@ -50,7 +50,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-def add_pk(request: HttpRequest) -> HttpResponse:
+def add_pk(request: HttpRequest) -> HttpResponse:  # TODO: replace this func to more sunbelt place
     if request.method == "POST":
         form = ComputerAddForm(request.POST)
         if form.is_valid():
