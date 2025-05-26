@@ -75,6 +75,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "Django_course_project.wsgi.application"
 ASGI_APPLICATION = "Django_course_project.asgi.application"
+
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
@@ -104,7 +105,6 @@ DATABASES = {
 # ]
 
 # Messages
-
 
 MESSAGE_TAGS = {
     constants.ERROR: "danger",
@@ -147,6 +147,7 @@ LOGIN_REDIRECT_URL = "user:home"
 LOGOUT_URL = "logout"
 LOGOUT_REDIRECT_URL = "login"
 
+# Redis
 # CHANNEL_LAYERS = {
 #     "default": {
 #         "BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -161,12 +162,12 @@ CHANNEL_LAYERS = {
     }
 }
 
+# Email
+# https://docs.djangoproject.com/en/5.1/topics/email/#defining-a-custom-email-backend
 INTERNAL_IPS = [
     "127.0.0.1",
     "192.168.50.16"
 ]
-
-# https://docs.djangoproject.com/en/5.1/topics/email/#defining-a-custom-email-backend
 DEFAULT_FROM_EMAIL = "admin@admin.admin"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -175,3 +176,11 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # EMAIL_USE_TLS = True
 # EMAIL_HOST_USER = "<EMAIL>"
 # EMAIL_HOST_PASSWORD = "<PASSWORD>"
+
+# Rest Framework
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ]
+}

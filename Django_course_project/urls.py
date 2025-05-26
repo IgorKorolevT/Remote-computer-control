@@ -23,6 +23,7 @@ urlpatterns = [
                   path("admin/", admin.site.urls, name="admin"),
                   path("chat/", include("chat.urls"), name="chat"),
                   path("", include("user.urls"), name="user"),
+                  path("api/v1/computer/", include("computer_api.urls"), name="pk_api"),
                   path("accounts/", include("django.contrib.auth.urls")),
               ] + debug_toolbar_urls()
 # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))
