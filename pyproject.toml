@@ -8,6 +8,7 @@ dependencies = [
     "channels-redis>=4.2.1",
     "channels[daphne]>=4.2.2",
     "django>=5.2",
+    "djangorestframework>=3.16.0",
     "utils>=1.0.2",
 ]
 
