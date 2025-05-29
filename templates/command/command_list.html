@@ -2,7 +2,7 @@
 {% block title %}Commands List{% endblock %}
 
 {% block content %}
-    <h2>Commands:</h2>
+    <h2>Commands <a class="btn btn-outline-primary" href="{% url "command:create" %}">+</a></h2>
     <ul>
         {% for object in object_list %}
             <li>

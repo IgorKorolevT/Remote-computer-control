@@ -7,4 +7,5 @@ from .serializers import ComputerSerializer
 class ComputerAPIView(CreateAPIView):
     serializer_class = ComputerSerializer
 
-# TODO: create update and delete view
+# TODO: create update and delete APIview
+
