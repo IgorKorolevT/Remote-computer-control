@@ -2,13 +2,9 @@ import json
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from chat.models import Computer
-from chat.utils import acreate_message
+from chat.utils import acreate_message, SenderTypes
 from user.models import User
 
-
-class SenderTypes: # TODO replace to more suitable place
-    USER = "user"
-    COMPUTER = "computer"
 
 
 
@@ -60,17 +56,11 @@ class ChatComputerConsumer(ChatConsumer):
 
     async def user_private_message(self, event):
         sender = event["sender"]
+        if event["type_sender"] == SenderTypes.COMPUTER and self.scope["url_route"]['kwargs']['name'] != sender:
+            return
         message = event["message"]
         time_send = event["date"]
-        data = {"message": message, "date": time_send}
-
-        if event["type_sender"] == SenderTypes.USER and self.user.id == sender:
-            data["sender"] = "You"
-        elif event["type_sender"] == SenderTypes.COMPUTER and self.scope["url_route"]['kwargs']['name'] == sender:
-            data["sender"] = sender
-        else:
-            raise TypeError("Type sender must be either user or computer")
-
+        data = {"message": message, "date": time_send, "sender": sender, "type_sender": event["type_sender"]}
         jdata = json.dumps(data)
         await self.send(text_data=jdata)
 
@@ -118,7 +108,7 @@ class ComputerConsumer(AsyncWebsocketConsumer):
             pass  # TODO: send message that user id isn't correct
 
     async def pk_private_message(self, event):
-        event["type"] = "base"
+        event["type"] = "base" # TODO: type message
         data = json.dumps(event)
         await self.send(text_data=data)
 

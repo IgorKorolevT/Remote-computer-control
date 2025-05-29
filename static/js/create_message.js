@@ -1,12 +1,21 @@
 const my_class = "my_message"
 const not_my_class = "not_my_message"
 const default_your = "You"
+let my_id = NaN
+let user_type = NaN
 
-function create_message(data, sender, time) {
-    var div = document.createElement("div");
-    div.className = "mb-2 p-2 border border-secondary text-dark message " + (sender === default_your ? my_class + " ms-auto " : not_my_class + " me-auto");
+function create_message(data, sender, time, sender_type) {
+    const div = document.createElement("div");
+    div.className = "mb-2 p-2 border border-secondary text-dark message "
+    let sender_name = sender;
+    if (sender === my_id && sender_type === user_type) {
+        div.className += my_class + " ms-auto "
+        sender_name = default_your
+    } else {
+        div.className += not_my_class + " me-auto "
+    }
     div.style.maxWidth = "70%";
-    div.innerHTML = `<strong>${sender}</strong>: ${data}<br><small class="text-muted">${time}</small>`;
+    div.innerHTML = `<strong>${sender_name}</strong>: ${data}<br><small class="text-muted">${time}</small>`;
     document.querySelector("#id_chat_item_container").appendChild(div);
     div.scrollIntoView({behavior: "smooth"});
 }

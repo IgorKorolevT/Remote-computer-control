@@ -32,7 +32,7 @@ function create_socket(url, receiver) {
     };
     chatSocket.onmessage = function (e) {
         const data = JSON.parse(e.data);
-        create_message(data.message, data.sender, data.date);
+        create_message(data.message, data.sender, data.date, data.type_sender);
     };
     chatSocket.onerror = function (error) {
         console.error("WebSocket Error:", error);

@@ -9,6 +9,7 @@ from typing import Dict
 type UserComputer = Union[User, Computer]
 type T_timestamp = Union[datetime, str]
 
+
 def create_message(
         text: str,
         sender: UserComputer,
@@ -108,3 +109,12 @@ def computer_context(
         "notifications": messages,
     }
     return context
+
+
+class SenderTypes:
+    USER = "user"
+    COMPUTER = "computer"
+
+    @staticmethod
+    def context() -> Dict[str, str]:
+        return {"User": SenderTypes.USER, "Computer": SenderTypes.COMPUTER}

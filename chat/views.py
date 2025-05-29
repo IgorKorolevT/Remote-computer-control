@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from chat.models import Computer
-from chat.utils import computer_context
+from chat.utils import computer_context, SenderTypes
 from user.models import User
 
 
@@ -15,6 +15,7 @@ def get_base_context(user: User) -> Dict[str, Union[Computer, User]]:
     computers = user.computers.all()
     context = {
         "computers": computers,
+        **SenderTypes.context()
     }
     return context
 

@@ -30,4 +30,8 @@
 {% block scripts %}
     <script src="{% static 'js/create_message.js' %}"></script>
     <script src="{% static 'js/create_chat_socket.js' %}"></script>
+    <script>
+        my_id = {{ user.id }};
+        user_type = "{{ User }}";
+    </script>
 {% endblock %}
