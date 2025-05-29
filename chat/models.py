@@ -47,6 +47,7 @@ class Room(models.Model):
 
 
 class Message(models.Model):
+    FORMAT = "%B %d, %Y, %I:%M %p"
     text = models.TextField(max_length=500)  # change max_length
     timestamp = models.DateTimeField(auto_now_add=True)
     sender_user = models.ForeignKey(
@@ -97,3 +98,8 @@ class Message(models.Model):
             self.recipient_user if self.recipient_user else self.recipient_computer
         )
         return recipient
+
+    @property
+    def get_timestamp(self):
+        str_t = self.timestamp.strftime(Message.FORMAT)
+        return str_t

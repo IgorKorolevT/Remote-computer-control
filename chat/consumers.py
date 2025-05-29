@@ -2,57 +2,77 @@ import json
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from chat.models import Computer
-from chat.utils import acreate_message, str_time
+from chat.utils import acreate_message
 from user.models import User
+
+
+class SenderTypes: # TODO replace to more suitable place
+    USER = "user"
+    COMPUTER = "computer"
+
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         user = self.scope["user"]
         if user.is_authenticated:
-            user.channel_name = self.channel_name
-            await sync_to_async(user.save)()
             self.user = user
+            await self._set_channel_name(self.channel_name)
             await self.accept()
         else:
             await self.close()
 
     async def disconnect(self, close_code):
-        self.user.channel_name = None
+        await self._set_channel_name()
+
+    async def _set_channel_name(self, channel_name: str = None) -> None:
+        self.user.channel_name = channel_name
         await sync_to_async(self.user.save)()
 
 
-class ChatComputerConsumer(ChatConsumer): # TODO: send user message
+class ChatComputerConsumer(ChatConsumer):
     async def receive(self, text_data: str = None, bytes_data=None):
         data = json.loads(text_data)
 
         message = data["message"]
         pk_name = data["receiver"]
-        timestamp = data["date"]
         try:
             pk = await sync_to_async(Computer.objects.get)(name=pk_name)
-            if pk:
-                await acreate_message(
-                    text=message, sender=self.user, recipient=pk, timestamp=timestamp
-                )
-            if pk and pk.channel_name:
-                context = {
-                    "message": message,
-                    "user_id": self.user.id,
-                    "type": "pk_private_message",
-                }
-                await self.channel_layer.send(pk.channel_name, context)
+            ms = await acreate_message(
+                text=message, sender=self.user, recipient=pk
+            )
+            base_context = {
+                "message": ms.text,
+                "sender": self.user.id,
+                "date": ms.get_timestamp,
+            }
+            user_context = {**base_context,
+                            "type_sender": SenderTypes.USER,
+                            "type": "user_private_message"}
+            await self.channel_layer.send(self.user.channel_name, user_context)
+            if pk.channel_name:
+                pk_context = {**base_context,
+                              "type_sender": SenderTypes.COMPUTER,
+                              "type": "pk_private_message"}
+                await self.channel_layer.send(pk.channel_name, pk_context)
         except Computer.DoesNotExist:
             pass  # TODO: send message that this computer doesn't exist
 
     async def user_private_message(self, event):
         sender = event["sender"]
-        name_pk = self.scope["url_route"]['kwargs']['name']
-        if sender == name_pk:
-            message = event["message"]
-            time_send = event["date"]
-            data = json.dumps({"message": message, "sender": sender, "date": time_send})
-            await self.send(text_data=data)
+        message = event["message"]
+        time_send = event["date"]
+        data = {"message": message, "date": time_send}
+
+        if event["type_sender"] == SenderTypes.USER and self.user.id == sender:
+            data["sender"] = "You"
+        elif event["type_sender"] == SenderTypes.COMPUTER and self.scope["url_route"]['kwargs']['name'] == sender:
+            data["sender"] = sender
+        else:
+            raise TypeError("Type sender must be either user or computer")
+
+        jdata = json.dumps(data)
+        await self.send(text_data=jdata)
 
 
 class ComputerConsumer(AsyncWebsocketConsumer):
@@ -75,34 +95,33 @@ class ComputerConsumer(AsyncWebsocketConsumer):
             await self.close(code=401)
 
     async def disconnect(self, close_code):
-        await self._set_channel_name(None)
+        await self._set_channel_name()
 
     async def receive(self, text_data: str = None, bytes_data=None):
         data = json.loads(text_data)
-        user_id = data["user_id"]
+        user_id = data["receiver"]
         text = data["message"]
 
         try:
             user = await sync_to_async(User.objects.get)(pk=user_id)
-        except User.DoesNotExist:
-            pass  # TODO: send message that user id isn't correct
-        else:
             ms = await acreate_message(text=text, sender=self.pk, recipient=user)
             if user.channel_name:
                 context = {
-                    "message": text,
+                    "message": ms.text,
                     "sender": self.pk.name,
-                    "date": str_time(ms.timestamp),
+                    "date": ms.get_timestamp,
+                    "type_sender": SenderTypes.COMPUTER,
                     "type": "user_private_message",
                 }
                 await self.channel_layer.send(user.channel_name, context)
+        except User.DoesNotExist:
+            pass  # TODO: send message that user id isn't correct
 
     async def pk_private_message(self, event):
-        message = event["message"]
-        user_id = event["user_id"]
-        data = json.dumps({"message": message, "user_id": user_id})
+        event["type"] = "base"
+        data = json.dumps(event)
         await self.send(text_data=data)
 
-    async def _set_channel_name(self, channel_name: None | str):
+    async def _set_channel_name(self, channel_name: str = None) -> None:
         self.pk.channel_name = channel_name
         await sync_to_async(self.pk.save)()

@@ -8,7 +8,6 @@ from typing import Dict
 
 type UserComputer = Union[User, Computer]
 type T_timestamp = Union[datetime, str]
-FORMAT = "%B %d, %Y, %I:%M %p"
 
 def create_message(
         text: str,
@@ -109,9 +108,3 @@ def computer_context(
         "notifications": messages,
     }
     return context
-
-
-def str_time(t: T_timestamp) -> str:
-    """Return string of datetime"""
-    str_t = t.strftime(FORMAT)
-    return str_t

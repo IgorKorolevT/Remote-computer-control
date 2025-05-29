@@ -1,9 +1,9 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
 
 from chat.models import Computer
@@ -16,8 +16,13 @@ from .forms import UserForm, ComputerAddForm, UserUpdateForm
 class UserCreateView(CreateView):
     form_class = UserForm
     model = get_user_model()
-    success_url = reverse_lazy("login")  # TODO: login and reverse_to profile
     template_name = "user/user_create.html"
+
+    def get_success_url(self):
+        if self.object:
+            login(self.request, self.object)
+            return reverse("user:profile")
+        return reverse("user:register")
 
 
 class UserDetailView(DetailView):
