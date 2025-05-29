@@ -15,3 +15,12 @@ class Command(models.Model):
     source = models.URLField(default=None, null=True, blank=True)
     # parent = models.ForeignKey('self', default=None, null=True, blank=True, related_name='children',
     #                            on_delete=models.SET_DEFAULT)
+    _sep = ";"
+
+    @property
+    def list_examples(self):
+        return self.examples.split(Command._sep)
+
+    @property
+    def list_parameters(self):
+        return self.parameters.split(Command._sep)
