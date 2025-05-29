@@ -1,5 +1,6 @@
-from django.contrib.auth import get_user_model, authenticate, login
+from django.contrib.auth import get_user_model, login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -11,7 +12,6 @@ from .forms import UserForm, ComputerAddForm, UserUpdateForm
 
 
 # Create your views here.
-
 
 class UserCreateView(CreateView):
     form_class = UserForm
@@ -25,14 +25,14 @@ class UserCreateView(CreateView):
         return reverse("user:register")
 
 
-class UserDetailView(DetailView):
+class UserDetailView(LoginRequiredMixin, DetailView):
     model = get_user_model()
 
     def get_object(self, queryset=None):
         return self.request.user
 
 
-class UserUpdateView(UpdateView):
+class UserUpdateView(LoginRequiredMixin, UpdateView):
     form_class = UserUpdateForm
     model = get_user_model()
     success_url = reverse_lazy("profile")
@@ -42,7 +42,7 @@ class UserUpdateView(UpdateView):
         return self.request.user
 
 
-class UserDeleteView(DeleteView):
+class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = get_user_model()
     success_url = reverse_lazy("user:register")
 
