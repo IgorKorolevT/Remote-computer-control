@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "chat",
     "user",
+    "command",
     "debug_toolbar",
     "crispy_forms",
     "crispy_bootstrap5",
