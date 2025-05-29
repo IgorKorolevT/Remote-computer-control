@@ -1,5 +1,7 @@
+{% load crispy_forms_filters %}
+
 <form method="post">
     {% csrf_token %}
-    {{ form }}
+    {{ form|crispy }}
     <input type="submit" class="btn btn-outline-primary" value="Submit">
 </form>

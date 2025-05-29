@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
 {% block title %}Login{% endblock %}
+{% load crispy_forms_filters %}
+
 
 {% block content %}
     <div class="container d-flex justify-content-center align-items-start min-vh-100 bg-body-tertiary pt-5">
@@ -9,7 +11,7 @@
                 <main class="form-signin text-center">
                     <form method="post">
                         {% csrf_token %}
-                        {{ form.as_p }}
+                        {{ form|crispy }}
                         <button type="submit" class="btn btn-outline-primary">Login</button>
                         <a href="{% url 'password_reset' %}" class="btn btn-outline-primary">Reset password</a>
                     </form>
