@@ -15,7 +15,20 @@ function create_message(data, sender, time, sender_type) {
         div.className += not_my_class + " me-auto "
     }
     div.style.maxWidth = "70%";
-    div.innerHTML = `<strong>${sender_name}</strong>: ${data}<br><small class="text-muted">${time}</small>`;
+
+    const strong = document.createElement('strong');
+    const small = document.createElement('small');
+    const br = document.createElement('br');
+
+    strong.textContent = sender_name;
+    small.textContent = time;
+    small.className = 'text-muted';
+
+    div.appendChild(strong);
+    div.appendChild(document.createTextNode(`: ${data}`));
+    div.appendChild(br);
+    div.appendChild(small);
+
     document.querySelector("#id_chat_item_container").appendChild(div);
     div.scrollIntoView({behavior: "smooth"});
 }
