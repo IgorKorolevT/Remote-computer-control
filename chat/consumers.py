@@ -67,6 +67,7 @@ class ChatComputerConsumer(ChatConsumer):
 
 class ComputerConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        await self.accept()
         headers = dict(self.scope["headers"])
         name, password = headers.get(b"name"), headers.get(b"password")
         if name and password:
@@ -74,15 +75,14 @@ class ComputerConsumer(AsyncWebsocketConsumer):
             try:
                 pk = await sync_to_async(Computer.objects.get)(name=name)
                 if not pk.check_password(password):
-                    await self.close()
+                    await self.close(code=4401)
                 self.pk = pk
                 await self._set_channel_name(self.channel_name)
-                await self.accept()
             except Computer.DoesNotExist:
-                await self.close()
+                await self.close(code=4401)
 
         else:
-            await self.close(code=401)
+            await self.close(code=4400)
 
     async def disconnect(self, close_code):
         await self._set_channel_name()
@@ -113,5 +113,6 @@ class ComputerConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=data)
 
     async def _set_channel_name(self, channel_name: str = None) -> None:
-        self.pk.channel_name = channel_name
-        await sync_to_async(self.pk.save)()
+        if hasattr(self, "pk"):
+            self.pk.channel_name = channel_name
+            await sync_to_async(self.pk.save)()
