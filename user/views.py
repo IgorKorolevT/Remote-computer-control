@@ -35,7 +35,7 @@ class UserDetailView(LoginRequiredMixin, DetailView):
 class UserUpdateView(LoginRequiredMixin, UpdateView):
     form_class = UserUpdateForm
     model = get_user_model()
-    success_url = reverse_lazy("profile")
+    success_url = reverse_lazy("user:profile")
     template_name = "user/user_update.html"
 
     def get_object(self, queryset=None):
