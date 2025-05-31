@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     "chat",
     "user",
     "command",
-    "debug_toolbar",
     "crispy_forms",
     "crispy_bootstrap5",
 ]
@@ -172,8 +171,7 @@ CHANNEL_LAYERS = {
 # Email
 # https://docs.djangoproject.com/en/5.1/topics/email/#defining-a-custom-email-backend
 INTERNAL_IPS = [
-    "127.0.0.1",
-    "192.168.50.16"
+    "34.169.244.15"
 ]
 
 # https://docs.djangoproject.com/en/5.1/topics/email/#defining-a-custom-email-backend
@@ -190,15 +188,10 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
+        # 'rest_framework.renderers.BrowsableAPIRenderer',
     ]
 }
 
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "channels.layers.InMemoryChannelLayer",
-#     }
-# }
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
