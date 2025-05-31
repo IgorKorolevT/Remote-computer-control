@@ -1,9 +1,10 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
 
 from chat.models import Computer
@@ -12,22 +13,26 @@ from .forms import UserForm, ComputerAddForm, UserUpdateForm
 
 # Create your views here.
 
-
 class UserCreateView(CreateView):
     form_class = UserForm
     model = get_user_model()
-    success_url = reverse_lazy("login")
     template_name = "user/user_create.html"
 
+    def get_success_url(self):
+        if self.object:
+            login(self.request, self.object)
+            return reverse("user:profile")
+        return reverse("user:register")
 
-class UserDetailView(DetailView):
+
+class UserDetailView(LoginRequiredMixin, DetailView):
     model = get_user_model()
 
     def get_object(self, queryset=None):
         return self.request.user
 
 
-class UserUpdateView(UpdateView):
+class UserUpdateView(LoginRequiredMixin, UpdateView):
     form_class = UserUpdateForm
     model = get_user_model()
     success_url = reverse_lazy("profile")
@@ -37,7 +42,7 @@ class UserUpdateView(UpdateView):
         return self.request.user
 
 
-class UserDeleteView(DeleteView):
+class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = get_user_model()
     success_url = reverse_lazy("user:register")
 
@@ -50,7 +55,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-def add_pk(request: HttpRequest) -> HttpResponse:
+def add_pk(request: HttpRequest) -> HttpResponse:  # TODO: replace this func to more sunbelt place
     if request.method == "POST":
         form = ComputerAddForm(request.POST)
         if form.is_valid():

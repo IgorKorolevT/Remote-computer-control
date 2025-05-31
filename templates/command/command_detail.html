@@ -1,0 +1,46 @@
+{% extends 'base_card.html' %}
+{% block title %}Commands List{% endblock %}
+
+{% block card_content %}
+    <h5 class="card-title">Command <strong>{{ object.command }}</strong> Information</h5>
+    <p class="card-text">
+        {{ object.description }}
+    </p>
+    <p class="card-text">
+        <strong>Author:</strong> {{ object.author.username }}
+    </p>
+    <p class="card-text">
+        <strong>Name:</strong> {{ object.name }}
+    </p>
+    <p class="card-text">
+        <strong>Operating System:</strong> {{ object.os|default:"Not provided" }}
+    </p>
+
+    <p class="card-text">
+        <strong>Syntax:</strong> {{ object.syntax }}
+    </p>
+
+    <p class="card-text">
+        <strong>Parameters:</strong>
+    </p>
+    <ul class="list">
+        {% for parm in object.list_parameters %}
+            <li>{{ parm }}</li>
+        {% endfor %}
+    </ul>
+    {% if object.examples %}
+        <p class="card-text">
+            <strong>Examples:</strong>
+        </p>
+        <ul class="list">
+            {% for exampl in object.list_examples %}
+                <li>{{ exampl }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if object.source %}
+        <p class="card-text">
+            <a href={{ object.source }}>{{ object.source }}</a>
+        </p>
+    {% endif %}
+{% endblock %}

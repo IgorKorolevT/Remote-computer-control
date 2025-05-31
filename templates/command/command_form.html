@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Command form{% endblock %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+    <div class="container text-center ms-auto">
+        <h2>Create new command</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <input type="submit" class="btn btn-outline-primary" value="Submit">
+        </form>
+    </div>
+{% endblock %}

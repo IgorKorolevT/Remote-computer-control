@@ -12,8 +12,15 @@ class Computer(models.Model):
     users = models.ManyToManyField(get_user_model(), related_name="computers")
     channel_name = models.CharField(unique=True, null=True, blank=True)
 
-    def __str__(self):
-        return f"{self.name}"
+    def __init__(self, *args, **kwargs):
+        if kwargs.get("password"):
+            kwargs["password"] = Computer.get_password(kwargs["password"])
+        super().__init__(*args, **kwargs)
+
+    @staticmethod
+    def get_password(raw_password: str) -> str:
+        """Get hashed password"""
+        return make_password(raw_password)
 
     def set_password(self, raw_password: str):
         """Set the password"""
@@ -22,6 +29,9 @@ class Computer(models.Model):
     def check_password(self, raw_password: str) -> bool:
         """Verify the provided password"""
         return check_password(raw_password, self.password)
+
+    def __str__(self):
+        return f"{self.name}"
 
 
 class Room(models.Model):
@@ -36,6 +46,7 @@ class Room(models.Model):
 
 
 class Message(models.Model):
+    FORMAT = "%B %d, %Y, %I:%M %p"
     text = models.TextField(max_length=500)  # change max_length
     timestamp = models.DateTimeField(auto_now_add=True)
     sender_user = models.ForeignKey(
@@ -86,3 +97,8 @@ class Message(models.Model):
             self.recipient_user if self.recipient_user else self.recipient_computer
         )
         return recipient
+
+    @property
+    def get_timestamp(self):
+        str_t = self.timestamp.strftime(Message.FORMAT)
+        return str_t
