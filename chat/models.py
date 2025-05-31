@@ -1,9 +1,8 @@
 import uuid
 
-from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password, check_password
-
+from django.db import models
 
 # Create your models here.
 class Computer(models.Model):

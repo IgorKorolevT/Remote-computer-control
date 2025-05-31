@@ -6,6 +6,7 @@ from chat.models import Computer, Room, Message
 from django.db.models import QuerySet, Q
 from typing import Dict
 
+
 type UserComputer = Union[User, Computer]
 type T_timestamp = Union[datetime, str]
 
