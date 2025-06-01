@@ -7,12 +7,13 @@ from command.models import Command
 # Create your views here.
 class CommandListView(ListView):
     model = Command
-    queryset = Command.objects.all().order_by('name')
+    queryset = Command.objects.all().order_by("name")
 
 
 class CommandDetailView(DetailView):
     model = Command
-    queryset = Command.objects.select_related('author')
+    queryset = Command.objects.select_related("author")
+
 
 class CommandCreateView(CreateView):
     model = Command

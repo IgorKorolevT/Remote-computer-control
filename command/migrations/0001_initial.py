@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -15,18 +14,35 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Command',
+            name="Command",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, unique=True)),
-                ('os', models.CharField()),
-                ('command', models.CharField()),
-                ('description', models.TextField(blank=True, default='Not provided', null=True)),
-                ('syntax', models.CharField(blank=True, default='Not provided')),
-                ('parameters', models.CharField(blank=True, default='Not provided')),
-                ('examples', models.TextField(blank=True, default=None, null=True)),
-                ('source', models.URLField(blank=True, default=None, null=True)),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100, unique=True)),
+                ("os", models.CharField()),
+                ("command", models.CharField()),
+                (
+                    "description",
+                    models.TextField(blank=True, default="Not provided", null=True),
+                ),
+                ("syntax", models.CharField(blank=True, default="Not provided")),
+                ("parameters", models.CharField(blank=True, default="Not provided")),
+                ("examples", models.TextField(blank=True, default=None, null=True)),
+                ("source", models.URLField(blank=True, default=None, null=True)),
+                (
+                    "author",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

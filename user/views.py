@@ -13,6 +13,7 @@ from .forms import UserForm, ComputerAddForm, UserUpdateForm
 
 # Create your views here.
 
+
 class UserCreateView(CreateView):
     form_class = UserForm
     model = get_user_model()
@@ -55,7 +56,9 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-def add_pk(request: HttpRequest) -> HttpResponse:  # TODO: replace this func to more sunbelt place
+def add_pk(
+    request: HttpRequest,
+) -> HttpResponse:  # TODO: replace this func to more sunbelt place
     if request.method == "POST":
         form = ComputerAddForm(request.POST)
         if form.is_valid():

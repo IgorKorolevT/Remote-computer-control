@@ -46,13 +46,11 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "crispy_forms",
     "crispy_bootstrap5",
-
 ]
 
 # CRISPY
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
-
 
 
 MIDDLEWARE = [
@@ -174,10 +172,7 @@ CHANNEL_LAYERS = {
 
 # Email
 # https://docs.djangoproject.com/en/5.1/topics/email/#defining-a-custom-email-backend
-INTERNAL_IPS = [
-    "127.0.0.1",
-    "192.168.50.16"
-]
+INTERNAL_IPS = ["127.0.0.1", "192.168.50.16"]
 DEFAULT_FROM_EMAIL = "admin@admin.admin"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -189,8 +184,8 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # Rest Framework
 REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",
     ]
 }
