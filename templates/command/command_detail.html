@@ -1,8 +1,11 @@
 {% extends 'base_card.html' %}
 {% block title %}Commands List{% endblock %}
 
+{% block top_content %}
+    <h1>Command: <strong>{{ object.name }}</strong></h1>
+{% endblock %}
+
 {% block card_content %}
-    <h5 class="card-title">Command <strong>{{ object.command }}</strong> Information</h5>
     <p class="card-text">
         {{ object.description }}
     </p>
@@ -10,7 +13,7 @@
         <strong>Author:</strong> {{ object.author.username }}
     </p>
     <p class="card-text">
-        <strong>Name:</strong> {{ object.name }}
+        <strong>Name:</strong> {{ object.command }}
     </p>
     <p class="card-text">
         <strong>Operating System:</strong> {{ object.os|default:"Not provided" }}

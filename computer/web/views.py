@@ -1,7 +1,10 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.views.generic import DetailView
+
 from computer.models import Computer
 from computer.forms import ComputerAddForm
 
@@ -31,3 +34,8 @@ def add_pk(
     else:
         form = ComputerAddForm()
     return render(request, "computer/computer.html", {"form": form})
+
+
+class ComputerDetailView(LoginRequiredMixin, DetailView):
+    model = Computer
+    queryset = Computer.objects.select_related("users")
