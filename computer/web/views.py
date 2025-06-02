@@ -15,7 +15,7 @@ from computer.forms import ComputerAddForm
 @login_required
 def add_pk(
     request: HttpRequest,
-) -> HttpResponse:  # TODO: replace this func to more sunbelt place
+) -> HttpResponse:
     if request.method == "POST":
         form = ComputerAddForm(request.POST)
         if form.is_valid():
