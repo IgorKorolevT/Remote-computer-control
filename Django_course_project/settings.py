@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "chat",
     "user",
     "command",
+    "computer",
     "debug_toolbar",
     "crispy_forms",
     "crispy_bootstrap5",
