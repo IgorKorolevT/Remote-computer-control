@@ -1,7 +1,7 @@
 import json
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
-from chat.models import Computer
+from computer.models import Computer
 from chat.utils import acreate_message, SenderTypes
 from user.models import User
 

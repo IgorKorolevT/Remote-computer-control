@@ -2,7 +2,8 @@ from datetime import datetime
 from typing import Union
 from asgiref.sync import sync_to_async
 from user.models import User
-from chat.models import Computer, Room, Message
+from chat.models import Room, Message
+from computer.models import Computer
 from django.db.models import QuerySet, Q
 from typing import Dict
 

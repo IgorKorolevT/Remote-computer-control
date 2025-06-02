@@ -3,7 +3,7 @@ from typing import Dict, Union
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, get_object_or_404
-from chat.models import Computer
+from computer.models import Computer
 from chat.utils import computer_context, SenderTypes
 from user.models import User
 

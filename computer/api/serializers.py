@@ -1,6 +1,5 @@
 from rest_framework import serializers
-
-from chat.models import Computer
+from computer.models import Computer
 
 
 class ComputerSerializer(serializers.ModelSerializer):

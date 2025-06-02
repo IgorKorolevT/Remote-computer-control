@@ -1,6 +1,6 @@
 from rest_framework.generics import CreateAPIView
 
-from .serializers import ComputerSerializer
+from computer.api.serializers import ComputerSerializer
 
 
 # Create your views here.
