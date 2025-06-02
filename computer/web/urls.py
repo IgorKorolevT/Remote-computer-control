@@ -6,4 +6,6 @@ from computer.web import views
 
 urlpatterns = [
     path("add/", views.add_pk, name="add"),
+    path("<str:name>/detail/", views.ComputerDetailView.as_view(), name="detail"),
+    path("", views.ComputerListView.as_view(), name="list"),
 ]

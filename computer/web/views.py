@@ -3,18 +3,16 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView
 
 from computer.models import Computer
 from computer.forms import ComputerAddForm
 
 
-
-
 # Create your views here.
 @login_required
 def add_pk(
-    request: HttpRequest,
+        request: HttpRequest,
 ) -> HttpResponse:
     if request.method == "POST":
         form = ComputerAddForm(request.POST)
@@ -33,9 +31,16 @@ def add_pk(
                 messages.error(request, "Invalid name of computer. Please try again.")
     else:
         form = ComputerAddForm()
-    return render(request, "computer/computer.html", {"form": form})
+    return render(request, "computer/computer_add.html", {"form": form})
 
 
 class ComputerDetailView(LoginRequiredMixin, DetailView):
     model = Computer
-    queryset = Computer.objects.select_related("users")
+    # queryset = Computer.objects.select_related("users")
+
+    def get_object(self, queryset=None) -> Computer:
+        return self.model.objects.get(name=self.kwargs["name"])
+
+
+class ComputerListView(LoginRequiredMixin, ListView):
+    model = Computer

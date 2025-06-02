@@ -12,7 +12,7 @@ def get_base_context(user: get_user_model()) -> Dict[str, QuerySet]:
     """Generate base context
     return {"computers": ...,}"""
     computers = user.computers.all()
-    context = {"computers": computers, **SenderTypes.context()}
+    context = {"computer_list": computers, **SenderTypes.context()}
     return context
 
 

@@ -7,16 +7,7 @@
     <div class="container-fluid text-center mx-0">
         <div class="row">
             <div class="col-sm-4">
-                <h4 class="mb-3">Computers <a href="{% url 'computer:add' %}" class="btn btn-outline-primary">+</a>
-                </h4>
-                <ul class="list">
-                    {% for computer in computers %}
-                        <li class="mb-2">
-                            <a href="{% url 'chat:chat_computers' computer.name %}"
-                               class="text-decoration-none">{{ computer.nickname|default:computer.name }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
+                {% include "includes/_computer_list.html" with url='chat:chat_computers' %}
             </div>
             <div class="col-sm-7">
                 {% block chat %}
