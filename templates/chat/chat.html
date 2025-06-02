@@ -13,7 +13,7 @@
                     {% for computer in computers %}
                         <li class="mb-2">
                             <a href="{% url 'chat:chat_computers' computer.name %}"
-                               class="text-decoration-none">{{ computer.nickname }}</a>
+                               class="text-decoration-none">{{ computer.nickname|default:computer.name }}</a>
                         </li>
                     {% endfor %}
                 </ul>
