@@ -1,11 +1,10 @@
-{% extends 'base.html' %}
-{% block content %}
-    <h2>Delete command</h2>
-    <form action="" method="post">
-        {% csrf_token %}
-        <p>
-            Are you sure you want to delete the command <strong>"{{ object.name }}"</strong>?<br>
-        </p>
-        <button type="submit" class="btn btn-danger">Delete</button>
-    </form>
+{% extends 'base_confirm_delete.html' %}
+
+{% block title %}Delete command{% endblock %}
+
+{% block h_text %}Delete command{% endblock %}
+{% block text %}
+    <p>
+        Are you sure you want to delete the command <strong>"{{ object.name }}"</strong>?<br>
+    </p>
 {% endblock %}

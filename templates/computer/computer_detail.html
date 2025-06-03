@@ -25,5 +25,6 @@
 {% block bottom_content %}
     {% if user in object.users.all %}
         <a href="{% url 'computer:update' object.name %}" class="btn btn-outline-primary">Update computer</a>
+        <a href="{% url 'computer:delete' object.name %}" class="btn btn-outline-danger">Delete computer</a>
     {% endif %}
 {% endblock %}

@@ -51,6 +51,6 @@
 {% block bottom_content %}
     {% if object.author.id == user.id %}
         <a href="{% url 'command:update' object.id %}" class="btn btn-outline-primary">Update command</a>
-        <a href="{% url 'command:delete' object.id %}" class="btn btn-danger">Delete command</a>
+        <a href="{% url 'command:delete' object.id %}" class="btn btn-outline-danger">Delete command</a>
     {% endif %}
 {% endblock %}

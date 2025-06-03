@@ -1,10 +1,11 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpRequest, HttpResponse, Http404
+from django.http import HttpRequest, HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.urls import reverse
-from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic import DetailView, ListView, UpdateView, DeleteView
+from rest_framework.reverse import reverse_lazy
 
 from computer.models import Computer
 from computer.forms import ComputerAddForm, ComputerUpdateForm
@@ -71,3 +72,19 @@ class ComputerUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self) -> str:
         return reverse("computer:detail", kwargs={"name": self.object.name})
+
+
+class ComputerDeleteView(LoginRequiredMixin, DeleteView):
+    model = Computer
+    success_url = reverse_lazy("computer:list")
+
+    def get_object(self, queryset=None) -> Computer:
+        pk = self.model.objects.filter(users__id=self.request.user.id, name=self.kwargs.get("name")).first()
+        if pk:
+            return pk
+        raise Http404
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.users.remove(request.user)
+        return HttpResponseRedirect(self.get_success_url())
