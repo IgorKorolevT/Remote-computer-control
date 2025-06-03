@@ -10,6 +10,7 @@ from command.models import Command
 class CommandListView(ListView):
     model = Command
     queryset = Command.objects.all().order_by("name")
+    paginate_by = 10
 
 
 class CommandDetailView(DetailView):
