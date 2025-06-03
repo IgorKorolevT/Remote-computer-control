@@ -27,7 +27,7 @@ def chat(request: HttpRequest) -> HttpResponse:
 def chat_computer(request: HttpRequest, name: str) -> HttpResponse:
     user = request.user
     context = get_base_context(user)
-    computers = context["computers"]
+    computers = context["computer_list"]
     chosen_computer = get_object_or_404(computers, name=name)
     context_m = computer_context(user, chosen_computer)
     context.update(context_m)

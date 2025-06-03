@@ -3,10 +3,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.views.generic import DetailView, ListView
+from django.urls import reverse
+from django.views.generic import DetailView, ListView, UpdateView
 
 from computer.models import Computer
-from computer.forms import ComputerAddForm
+from computer.forms import ComputerAddForm, ComputerUpdateForm
 
 
 # Create your views here.
@@ -38,7 +39,8 @@ class ComputerDetailView(LoginRequiredMixin, DetailView):
     model = Computer
 
     def get_object(self, queryset=None) -> Computer:
-        pk = self.model.objects.filter(users__id=self.request.user.id, name=self.kwargs.get("name")).prefetch_related("users").first()
+        pk = self.model.objects.filter(users__id=self.request.user.id, name=self.kwargs.get("name")).prefetch_related(
+            "users").first()
         if pk:
             return pk
         raise Http404
@@ -49,3 +51,23 @@ class ComputerListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return self.model.objects.filter(users__id=self.request.user.id)
+
+
+class ComputerUpdateView(LoginRequiredMixin, UpdateView):
+    model = Computer
+    form_class = ComputerUpdateForm
+
+    def form_valid(self, form) -> HttpResponse:
+        pk = self.model.objects.filter(users__id=self.request.user.id, name=self.kwargs.get("name")).first()
+        if pk:
+            return super().form_valid(form)
+        raise Http404
+
+    def get_object(self, queryset=None) -> Computer:
+        pk = self.model.objects.filter(users__id=self.request.user.id, name=self.kwargs.get("name")).first()
+        if pk:
+            return pk
+        raise Http404
+
+    def get_success_url(self) -> str:
+        return reverse("computer:detail", kwargs={"name": self.object.name})

@@ -1,6 +1,6 @@
 <h4 class="mb-3">Computers <a href="{% url 'computer:add' %}" class="btn btn-outline-primary">+</a>
 </h4>
-<ul class="list">
+<ul class="list ms-4">
     {% for computer in computer_list %}
         <li class="mb-2">
             <a href="{% url detail_url computer.name %}"
