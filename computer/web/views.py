@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views.generic import DetailView, ListView
@@ -36,11 +36,16 @@ def add_pk(
 
 class ComputerDetailView(LoginRequiredMixin, DetailView):
     model = Computer
-    # queryset = Computer.objects.select_related("users")
 
     def get_object(self, queryset=None) -> Computer:
-        return self.model.objects.get(name=self.kwargs["name"])
+        pk = self.request.user.computers.filter(name=self.kwargs.get("name")).select_related("users").first()
+        if pk:
+            return pk
+        raise Http404
 
 
 class ComputerListView(LoginRequiredMixin, ListView):
     model = Computer
+
+    def get_queryset(self):
+        return self.model.objects.filter(users__id=self.request.user.id)

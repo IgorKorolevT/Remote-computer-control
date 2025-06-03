@@ -3,7 +3,7 @@
 <ul class="list">
     {% for computer in computer_list %}
         <li class="mb-2">
-            <a href="{% url url computer.name %}"
+            <a href="{% url detail_url computer.name %}"
                class="text-decoration-none">{{ computer.nickname|default:computer.name }}</a>
         </li>
     {% endfor %}
