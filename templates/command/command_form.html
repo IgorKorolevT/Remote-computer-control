@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="container text-center ms-auto">
-        <h2>Create new command</h2>
+        <h2>{{ object|yesno:"Create new command,Update the command" }}</h2>
         <form method="post">
             {% csrf_token %}
             {{ form|crispy }}

@@ -1,5 +1,7 @@
-from django.urls import reverse
-from django.views.generic import ListView, DetailView, CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import Http404
+from django.urls import reverse, reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .forms import CommandCreatForm
 from command.models import Command
 
@@ -26,3 +28,27 @@ class CommandCreateView(CreateView):
 
     def get_success_url(self):
         return reverse("command:detail", kwargs={"pk": self.object.pk})
+
+
+class CommandUpdateView(LoginRequiredMixin, UpdateView):
+    model = Command
+    form_class = CommandCreatForm
+
+    def get_success_url(self):
+        return reverse("command:detail", kwargs={"pk": self.object.pk})
+
+    def get_object(self, queryset=None):
+        command = self.request.user.commands.filter(pk=self.kwargs.get("pk")).first()
+        if command:
+            return command
+        raise Http404
+
+class CommandDeleteView(LoginRequiredMixin, DeleteView):
+    model = Command
+    success_url = reverse_lazy("command:list")
+
+    def get_object(self, queryset=None):
+        command = self.request.user.commands.filter(pk=self.kwargs.get("pk")).first()
+        if command:
+            return command
+        raise Http404
