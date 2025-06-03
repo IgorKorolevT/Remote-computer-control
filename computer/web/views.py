@@ -38,7 +38,7 @@ class ComputerDetailView(LoginRequiredMixin, DetailView):
     model = Computer
 
     def get_object(self, queryset=None) -> Computer:
-        pk = self.request.user.computers.filter(name=self.kwargs.get("name")).select_related("users").first()
+        pk = self.model.objects.filter(users__id=self.request.user.id, name=self.kwargs.get("name")).prefetch_related("users").first()
         if pk:
             return pk
         raise Http404
