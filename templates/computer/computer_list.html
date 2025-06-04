@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Computers{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        {% include "includes/_computer_list.html" with detail_url="computer:detail" %}
+    </div>
+{% endblock %}

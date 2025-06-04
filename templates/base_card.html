@@ -2,6 +2,12 @@
 
 {% block content %}
     <div class="container mt-5">
+        <div class="row">
+            <div class="col-12 text-center">
+                {% block top_content %}
+                {% endblock %}
+            </div>
+        </div>
         <div class="row justify-content-center mt-4">
             <div class="col-md-8 col-lg-6">
                 <div class="card shadow-sm">
@@ -11,5 +17,14 @@
                 </div>
             </div>
         </div>
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8 col-lg-6 text-center">
+                {% block bottom_content %}
+                {% endblock %}
+            </div>
+        </div>
     </div>
 {% endblock %}
+
+
+

@@ -1,15 +1,8 @@
-{% extends 'base.html' %}
+{% extends 'base_confirm_delete.html' %}
 
 {% block title %}Delete user{% endblock %}
 
-
-{% block content %}
-    <div class="container text-center ms-auto">
-        <h2>Delete user</h2>
-        <form method="post">
-            {% csrf_token %}
-            <p>Are you sure you want to delete your account?</p>
-            <input type="submit" class="btn btn-outline-danger" value="Confirm">
-        </form>
-    </div>
+{% block h_text %}Delete user{% endblock %}
+{% block text %}
+    <p>Are you sure you want to delete your account?</p>
 {% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'base_confirm_delete.html' %}
+
+{% block title %}Delete command{% endblock %}
+
+{% block h_text %}Delete command{% endblock %}
+{% block text %}
+    <p>
+        Are you sure you want to delete the command <strong>"{{ object.name }}"</strong>?<br>
+    </p>
+{% endblock %}

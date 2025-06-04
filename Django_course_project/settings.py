@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "chat",
     "user",
     "command",
+    "computer",
     "crispy_forms",
     "crispy_bootstrap5",
 ]
@@ -50,7 +51,6 @@ INSTALLED_APPS = [
 # CRISPY
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
-
 
 
 MIDDLEWARE = [
@@ -169,11 +169,6 @@ CHANNEL_LAYERS = {
 }
 
 # Email
-# https://docs.djangoproject.com/en/5.1/topics/email/#defining-a-custom-email-backend
-INTERNAL_IPS = [
-    "34.169.244.15"
-]
-
 # https://docs.djangoproject.com/en/5.1/topics/email/#defining-a-custom-email-backend
 DEFAULT_FROM_EMAIL = "admin@admin.admin"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

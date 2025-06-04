@@ -1,11 +1,9 @@
 import json
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
-from chat.models import Computer
+from computer.models import Computer
 from chat.utils import acreate_message, SenderTypes
 from user.models import User
-
-
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -34,33 +32,43 @@ class ChatComputerConsumer(ChatConsumer):
         pk_name = data["receiver"]
         try:
             pk = await sync_to_async(Computer.objects.get)(name=pk_name)
-            ms = await acreate_message(
-                text=message, sender=self.user, recipient=pk
-            )
+            ms = await acreate_message(text=message, sender=self.user, recipient=pk)
             base_context = {
                 "message": ms.text,
                 "sender": self.user.id,
                 "date": ms.get_timestamp,
             }
-            user_context = {**base_context,
-                            "type_sender": SenderTypes.USER,
-                            "type": "user_private_message"}
+            user_context = {
+                **base_context,
+                "type_sender": SenderTypes.USER,
+                "type": "user_private_message",
+            }
             await self.channel_layer.send(self.user.channel_name, user_context)
             if pk.channel_name:
-                pk_context = {**base_context,
-                              "type_sender": SenderTypes.COMPUTER,
-                              "type": "pk_private_message"}
+                pk_context = {
+                    **base_context,
+                    "type_sender": SenderTypes.COMPUTER,
+                    "type": "pk_private_message",
+                }
                 await self.channel_layer.send(pk.channel_name, pk_context)
         except Computer.DoesNotExist:
             pass  # TODO: send message that this computer doesn't exist
 
     async def user_private_message(self, event):
         sender = event["sender"]
-        if event["type_sender"] == SenderTypes.COMPUTER and self.scope["url_route"]['kwargs']['name'] != sender:
+        if (
+            event["type_sender"] == SenderTypes.COMPUTER
+            and self.scope["url_route"]["kwargs"]["name"] != sender
+        ):
             return
         message = event["message"]
         time_send = event["date"]
-        data = {"message": message, "date": time_send, "sender": sender, "type_sender": event["type_sender"]}
+        data = {
+            "message": message,
+            "date": time_send,
+            "sender": sender,
+            "type_sender": event["type_sender"],
+        }
         jdata = json.dumps(data)
         await self.send(text_data=jdata)
 
@@ -108,7 +116,7 @@ class ComputerConsumer(AsyncWebsocketConsumer):
             pass  # TODO: send message that user id isn't correct
 
     async def pk_private_message(self, event):
-        event["type"] = "base" # TODO: type message
+        event["type"] = "base"  # TODO: type message
         data = json.dumps(event)
         await self.send(text_data=data)
 

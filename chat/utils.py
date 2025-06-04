@@ -2,7 +2,8 @@ from datetime import datetime
 from typing import Union
 from asgiref.sync import sync_to_async
 from user.models import User
-from chat.models import Computer, Room, Message
+from chat.models import Room, Message
+from computer.models import Computer
 from django.db.models import QuerySet, Q
 from typing import Dict
 
@@ -90,8 +91,8 @@ def _m_computer(user: User, computer: Computer) -> QuerySet:
             Q(sender_user=user, recipient_computer=computer)
             | Q(sender_computer=computer, recipient_user=user)
         )
-        .select_related("sender_user", "sender_computer").only("sender_user__username", "sender_computer__name",
-                                                               "timestamp", "text")
+        .select_related("sender_user", "sender_computer")
+        .only("sender_user__username", "sender_computer__name", "timestamp", "text", "sender_computer__nickname")
         .order_by("timestamp")
     )
     return messages

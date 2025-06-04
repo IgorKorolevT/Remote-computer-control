@@ -1,22 +1,18 @@
-from typing import Dict, Union
-
+from typing import Dict
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, get_object_or_404
-from chat.models import Computer
 from chat.utils import computer_context, SenderTypes
-from user.models import User
 
 
 # Create your views here.
-def get_base_context(user: User) -> Dict[str, Union[Computer, User]]:
+def get_base_context(user: get_user_model()) -> Dict[str, QuerySet]:
     """Generate base context
     return {"computers": ...,}"""
     computers = user.computers.all()
-    context = {
-        "computers": computers,
-        **SenderTypes.context()
-    }
+    context = {"computer_list": computers, **SenderTypes.context()}
     return context
 
 
@@ -31,7 +27,7 @@ def chat(request: HttpRequest) -> HttpResponse:
 def chat_computer(request: HttpRequest, name: str) -> HttpResponse:
     user = request.user
     context = get_base_context(user)
-    computers = context["computers"]
+    computers = context["computer_list"]
     chosen_computer = get_object_or_404(computers, name=name)
     context_m = computer_context(user, chosen_computer)
     context.update(context_m)

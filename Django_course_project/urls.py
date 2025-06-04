@@ -22,8 +22,8 @@ urlpatterns = [
     path("admin/", admin.site.urls, name="admin"),
     path("chat/", include("chat.urls"), name="chat"),
     path("", include("user.urls"), name="user"),
-    path("api/v1/computer/", include("computer_api.urls"), name="pk_api"),
+    path("computer/", include("computer.urls"), name="computer"),
     path("accounts/", include("django.contrib.auth.urls")),
     path("commands/", include("command.urls")),
-]
+] 
 # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))

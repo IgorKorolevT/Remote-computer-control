@@ -1,6 +1,6 @@
 {% extends 'chat/chat.html' %}
 {% block chat %}
-    {% include 'includes/chat_enter_m.html' with name=chosen_computer.nickname %}
+    {% include 'includes/chat_enter_m.html' with name=chosen_computer.nickname|default:chosen_computer.name %}
 {% endblock %}
 {% block scripts %}
     {{ block.super }}

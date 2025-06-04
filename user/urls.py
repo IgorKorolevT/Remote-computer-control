@@ -9,5 +9,4 @@ urlpatterns = [
     path("update_user/", views.UserUpdateView.as_view(), name="update_user"),
     path("delete_user/", views.UserDeleteView.as_view(), name="delete_user"),
     path("", views.index, name="home"),
-    path("add/computers/", views.add_pk, name="add_computer"),
 ]

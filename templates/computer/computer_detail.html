@@ -1,0 +1,30 @@
+{% extends 'base_card.html' %}
+
+{% block title %}Computer detail{% endblock %}
+
+{% block top_content %}
+    <h1> {{ object.nickname|default:object.name }} {{ object.channel_name|yesno:"Online,Offline" }}</h1>
+{% endblock %}
+{% block card_content %}
+    <p class="card-text">
+        <strong>Unique name:</strong> {{ object.name }}
+    </p>
+    <p class="card-text">
+        <strong>Nickname name:</strong> {{ object.nickname|default:"Not provided" }}
+    </p>
+    <p class="card-text">
+        <strong>Users who own the computer</strong>
+    </p>
+    <ul class="list">
+        {% for user in object.users.all %}
+            <li>{{ user.username }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block bottom_content %}
+    {% if user in object.users.all %}
+        <a href="{% url 'computer:update' object.name %}" class="btn btn-outline-primary">Update computer</a>
+        <a href="{% url 'computer:delete' object.name %}" class="btn btn-outline-danger">Delete computer</a>
+    {% endif %}
+{% endblock %}

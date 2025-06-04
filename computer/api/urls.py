@@ -1,7 +1,7 @@
 from django.urls import path
-from . import views
+from computer.api import views
 
-app_name = "pk_api"
+app_name = "api"
 
 urlpatterns = [
     path("", views.ComputerAPIView.as_view()),

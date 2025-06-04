@@ -4,7 +4,7 @@ from django.db import models
 
 # Create your models here.
 class Command(models.Model):
-    author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='commands')
     name = models.CharField(unique=True, max_length=100)
     os = models.CharField()
     command = models.CharField()
