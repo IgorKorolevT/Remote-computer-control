@@ -25,7 +25,6 @@ SECRET_KEY = "django-insecure-j$5plbwqw2*4kvkrgbha$o4ac_-46q=%u%bm4uve-4az577b!!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-
 ALLOWED_HOSTS = ["www.igorkorolevcourseproject.duckdns.org", "igorkorolevcourseproject.duckdns.org", "34.169.244.15",
                  "localhost", "127.0.0.1"]
 # Application definition
@@ -38,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'django.contrib.postgres',
     "channels",
     "rest_framework",
     "chat",
@@ -51,7 +51,6 @@ INSTALLED_APPS = [
 # CRISPY
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
-
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -87,11 +86,21 @@ ASGI_APPLICATION = "Django_course_project.asgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'db',
+        'USER': 'postgres_user',
+        'PASSWORD': '12345',
+        'HOST': 'pgdb',
+        'PORT': '5432',
     }
 }
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -134,7 +143,6 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
