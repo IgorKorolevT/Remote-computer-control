@@ -1,20 +1,34 @@
 services:
   web:
-    build: .
-#    command: >
-#      sh -c "python manage.py collectstatic --noinput &&
-#             uv run manage.py runserver 0.0.0.0:8000"
+    build:
+      context: .
+    container_name: web
     volumes:
       - .:/app
       - static:/app/staticfiles
       - media:/app/media
     ports:
-          - "8000:8000"
+      - "8000:8000"
     depends_on:
       - redis
+      - postgres
 
   redis:
     image: redis:7
+
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_DB=db
+      - POSTGRES_USER=postgres_user
+      - POSTGRES_PASSWORD=12345
+      - POSTGRES_HOST=127.0.0.1
+    ports:
+      - "5432:5432"
+    container_name: pgdb
+    volumes:
+      - pgdbdata:/var/lib/postgresql/data/
+
 
   nginx:
     image: nginx:latest
@@ -32,3 +46,4 @@ services:
 volumes:
   static:
   media:
+  pgdbdata:
