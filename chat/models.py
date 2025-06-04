@@ -3,7 +3,6 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from computer.models import Computer
 
-
 # Create your models here.
 class Room(models.Model):
     name = models.CharField(max_length=100)
