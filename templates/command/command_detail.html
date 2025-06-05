@@ -13,7 +13,7 @@
         <strong>Author:</strong> {{ object.author.username }}
     </p>
     <p class="card-text">
-        <strong>Name:</strong> {{ object.command }}
+        <strong>Command:</strong> {{ object.command }}
     </p>
     <p class="card-text">
         <strong>Operating System:</strong> {{ object.os|default:"Not provided" }}
@@ -26,11 +26,9 @@
     <p class="card-text">
         <strong>Parameters:</strong>
     </p>
-    <ul class="list">
-        {% for parm in object.list_parameters %}
-            <li>{{ parm }}</li>
-        {% endfor %}
-    </ul>
+
+    {% include "includes/parameter_list.html" with parameters=object.parameters.all %}
+
     {% if object.examples %}
         <p class="card-text">
             <strong>Examples:</strong>

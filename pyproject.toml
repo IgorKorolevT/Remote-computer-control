@@ -5,6 +5,7 @@ description = "description"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "aiohttp>=3.12.9",
     "beautifulsoup4>=4.13.4",
     "channels-redis>=4.2.1",
     "channels[daphne]>=4.2.2",
@@ -13,7 +14,6 @@ dependencies = [
     "django-crispy-forms>=2.4",
     "djangorestframework>=3.16.0",
     "psycopg[binary]>=3.2.9",
-    "requests>=2.32.3",
     "utils>=1.0.2",
 ]
 
