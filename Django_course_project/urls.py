@@ -17,7 +17,6 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from debug_toolbar.toolbar import debug_toolbar_urls
 
 urlpatterns = [
     path("admin/", admin.site.urls, name="admin"),
@@ -26,5 +25,5 @@ urlpatterns = [
     path("computer/", include("computer.urls"), name="computer"),
     path("accounts/", include("django.contrib.auth.urls")),
     path("commands/", include("command.urls")),
-] + debug_toolbar_urls()
+]
 # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))
