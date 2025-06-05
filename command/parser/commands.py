@@ -5,6 +5,9 @@ import requests
 from bs4 import BeautifulSoup
 from bs4.element import PageElement, Tag, NavigableString
 
+from command.models import Command, Parameter
+from user.models import User
+
 BASE_URL = "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/windows-commands"
 COMMAND_URL = "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/"
 type _Content = Union[PageElement, Tag, NavigableString]
@@ -24,10 +27,14 @@ def _get_soup(url, features="html.parser"):
     return soup
 
 
-def create_command(name: str, description: str, syntax: str, examples: Examples, parameters: Parameters):
+def create_command(name: str, description: str, syntax: str, examples: Examples, parameters: Parameters) -> Command:
     """Add command to db"""
-    print(
-        f"Creating command named '{name}' with description '{description}' syntax '{syntax}' examples '{examples}' parameters '{parameters}'")
+    author = User.objects.get(username="superadmin")
+    command = Command.objects.create(author=author,name=name, description=description, syntax=syntax, examples=examples)
+    command.save()
+    for parameter in parameters:
+        Parameter.objects.create(parameter_name=parameter[0], description=parameter[1], command=command).save()
+    return command
 
 
 def parse_command(url) -> None:

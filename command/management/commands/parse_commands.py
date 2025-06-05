@@ -5,22 +5,19 @@ from command.parser.commands import parse_commands
 
 class Command(BaseCommand):
     help = "Parse commands from microsoft"
-
-    def add_arguments(self, parser):
-        parser.add_argument(
-            "--total_number",
-            type=int,
-            default=10,
-            help="Total number of courses to create",
-        )
-        parser.add_argument(
-            "--root_number",
-            type=int,
-            default=2,
-            help="Number of root courses to create",
-        )
+    # def add_arguments(self, parser):
+    #     parser.add_argument(
+    #         "--total_number",
+    #         type=int,
+    #         default=10,
+    #         help="Total number of courses to create",
+    #     )
+    #     parser.add_argument(
+    #         "--root_number",
+    #         type=int,
+    #         default=2,
+    #         help="Number of root courses to create",
+    #
 
     def handle(self, *args, **options):
-        total_number = options["total_number"]
-        root_number = options["root_number"]
         parse_commands()
