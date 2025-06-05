@@ -1,0 +1,22 @@
+{#<table>#}
+{#     {% for parm in parameters %}#}
+{#        <p>Name:<strong>{{ parameter.parameter_name }}</strong></p>#}
+{#    {% endfor %}#}
+{#</table>#}
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for parm in parameters %}
+        <tr>
+            <td>{{ parm.parameter_name }}</td>
+            <td>{{ parm.description }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

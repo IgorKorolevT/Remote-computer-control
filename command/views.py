@@ -10,12 +10,12 @@ from command.models import Command
 class CommandListView(ListView):
     model = Command
     queryset = Command.objects.all().order_by("name")
-    paginate_by = 10
+    paginate_by = 25
 
 
 class CommandDetailView(DetailView):
     model = Command
-    queryset = Command.objects.select_related("author")
+    queryset = Command.objects.select_related("author").prefetch_related("parameters")
 
 
 class CommandCreateView(LoginRequiredMixin, CreateView):
