@@ -3,23 +3,21 @@ from typing import Union, List, Tuple
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 from bs4.element import PageElement, Tag, NavigableString
+from django.contrib.auth import get_user_model
 from django.db import IntegrityError
-
 from command.models import Command, Parameter
-from user.models import User
 import aiohttp
 
-BASE_URL = "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/windows-commands"
-COMMAND_URL = "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/"
-AUTHOR = User.objects.get(username="superadmin")
-type _Content = Union[PageElement, Tag, NavigableString]
-type Examples = List[str]
-type Parameters = List[Tuple[str, str]]
+DEFAULT_OS = "Windows"
+_Content = Union[PageElement, Tag, NavigableString]
+Examples = List[str]
+Parameters = List[Tuple[str, str]]
+User = get_user_model()
 
 
-def _get_command_url(command_url_prefix: str) -> str:
+def _get_command_url(detail_command_url: str, command_url_prefix: str) -> str:
     """Return full detail url for this command"""
-    return urljoin(COMMAND_URL, command_url_prefix)
+    return urljoin(detail_command_url, command_url_prefix)
 
 
 async def _get_soup_async(session: aiohttp.ClientSession, url: str, features="html.parser"):
@@ -30,25 +28,37 @@ async def _get_soup_async(session: aiohttp.ClientSession, url: str, features="ht
         return soup
 
 
-async def create_command(name: str, command: str, description: str, syntax: str, examples: Examples,
-                         parameters: Parameters, os: str = "Windows", source: str = None) -> Command:
+async def create_command(update: bool, author: User, name: str, command: str, description: str, syntax: str,
+                         examples: Examples,
+                         parameters: Parameters, os: str, source: str = None) -> Command:
     """Add or update command"""
     try:
-        command = await Command.objects.aupdate_or_create(author=AUTHOR, name=name, command=command,
-                                                          description=description, syntax=syntax,
-                                                          examples=examples, os=os, source=source)
-        command = command[0]
-        for parameter in parameters:
-            await Parameter.objects.aupdate_or_create(parameter_name=parameter[0], description=parameter[1],
-                                                      command=command)
+        if update:
+            command = await Command.objects.aupdate_or_create(author=author, name=name, command=command,
+                                                              description=description, syntax=syntax,
+                                                              examples=examples, os=os, source=source)
+            command = command[0]
+            for parameter in parameters:
+                await Parameter.objects.aupdate_or_create(parameter_name=parameter[0], description=parameter[1],
+                                                          command=command)
+        else:
+            command = await Command.objects.acreate(author=author, name=name, command=command,
+                                                    description=description, syntax=syntax,
+                                                    examples=examples, os=os, source=source)
+            for parameter in parameters:
+                await Parameter.objects.acreate(parameter_name=parameter[0], description=parameter[1],
+                                                command=command)
     except IntegrityError as e:
-        pass
-        # print(f"Command {name} already exists")
+        print(f"Command {name} has already created")
     return command
 
 
-async def async_parse_command(session: aiohttp.ClientSession, url: str) -> None:
-    """from url parse one command"""
+async def async_parse_command(url: str, update: bool = False, session: aiohttp.ClientSession = None,
+                              author: User = None,
+                              os: str = DEFAULT_OS) -> None:
+    """Parse one command and save it to db"""
+    if session is None:
+        session = aiohttp.ClientSession()
 
     def find_syntax(content: _Content) -> str:
         h_elem = content.find("h2", {"id": "syntax"})
@@ -86,29 +96,48 @@ async def async_parse_command(session: aiohttp.ClientSession, url: str) -> None:
         parameters = find_parameters(content)
     except AttributeError as e:
         print(f"Command {name} has no created")
-        return None
-
-    await create_command(name=name, command=name, description=description, syntax=syntax, examples=examples,
-                         parameters=parameters, source=url)
+    else:
+        await create_command(author=author, name=name, command=name, description=description, syntax=syntax,
+                             examples=examples, update=update,
+                             parameters=parameters, source=url, os=os)
     return None
 
 
-async def async_parse_commands():
-    """Parse all commands from the main commands page."""
+async def _get_author(author_username: str) -> User:
+    author = await get_user_model().objects.aget(username=author_username)
+    return author
+
+
+async def async_parse_commands(home_url: str, detail_command_url: str, author_username: str, update: bool = False,
+                               os: str = DEFAULT_OS) -> None:
+    """Async parse all commands from the main commands page."""
+    author = await _get_author(author_username)
+
     async with aiohttp.ClientSession() as session:
         try:
-            soup = await _get_soup_async(session, BASE_URL)
+            soup = await _get_soup_async(session, home_url)
 
             commands = soup.find_all("a", {"data-linktype": "relative-path"})
             # Delete duplication cscript and wscript
             commands = commands[2:]
             tasks = list()
             for command in commands:
-                command_url = _get_command_url(command.get("href"))
-                tasks.append(asyncio.create_task(async_parse_command(session, command_url)))
-            print(f"The total number of teams is {len(tasks)}")
+                command_url = _get_command_url(detail_command_url, command.get("href"))
+                tasks.append(asyncio.create_task(
+                    async_parse_command(update=update, url=command_url, author=author, os=os, session=session)))
+            print(f"The total number of commands is {len(tasks)}")
             await asyncio.gather(*tasks)
         except aiohttp.ClientError as e:
             print(f"Error fetching main page: {str(e)}")
         except asyncio.TimeoutError as e:
-            print("KeyboardInterrupt")
+            print("Time out")
+
+
+def parse_commands(home_url: str, detail_command_url: str, author_username: str, update: bool = False,
+                   os: str = DEFAULT_OS) -> None:
+    """Parse all commands from the main commands page."""
+    try:
+        asyncio.run(async_parse_commands(update=update, author_username=author_username, os=os, home_url=home_url,
+                                         detail_command_url=detail_command_url))
+    except KeyboardInterrupt as e:
+        print("Cancelled parser")
