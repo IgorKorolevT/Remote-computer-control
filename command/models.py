@@ -12,11 +12,12 @@ class Command(models.Model):
     os = models.CharField()
     command = models.CharField(null=False)
     description = models.TextField(default="Not provided", null=True, blank=True)
-    syntax = models.CharField(default="Not provided", blank=True)
+    syntax = models.CharField(default="Not provided", null=True, blank=True)
     examples = ArrayField(
         models.CharField(max_length=200), default=list, null=True, blank=True
     )
     source = models.URLField(default=None, null=True, blank=True)
+
     # parent = models.ForeignKey('self', default=None, null=True, blank=True, related_name='subcommands',
     #                            on_delete=models.CASCADE)
 

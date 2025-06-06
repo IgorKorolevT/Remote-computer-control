@@ -83,7 +83,7 @@ async def create_command(
                     description=parameter[1],
                     command=command,
                 )
-    except IntegrityError:
+    except IntegrityError as e:
         print(f"Command '{name}' has already created")
     return command
 
@@ -101,7 +101,9 @@ async def async_parse_command(
 
     def find_syntax(content: _Content) -> str:
         h_elem = content.find("h2", {"id": "syntax"})
-        syntax_text = h_elem.find_next("pre").text.strip()
+        syntax_text = None
+        if h_elem:
+            syntax_text = h_elem.find_next("pre").text.strip()
         return syntax_text
 
     def find_examples(content: _Content) -> Examples:
