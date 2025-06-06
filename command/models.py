@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.indexes import GinIndex
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
@@ -23,6 +24,9 @@ class Command(models.Model):
 
     class Meta:
         ordering = ("name",)
+        indexes = [
+            GinIndex(fields=['name']),
+        ]
 
     def __str__(self):
         return self.name
