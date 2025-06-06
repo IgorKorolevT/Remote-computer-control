@@ -22,7 +22,7 @@ class CommandListView(ListView):
         search = self.request.GET.get("search")
         if search:
             return Command.objects.annotate(similarity=TrigramSimilarity("name", search)).filter(
-                similarity__gt=0.025).order_by('-similarity')
+                similarity__gt=0.1).order_by('-similarity')
         return Command.objects.all()
 
 
