@@ -9,6 +9,7 @@ from .forms import UserForm, UserUpdateForm
 
 # Create your views here.
 
+
 class UserCreateView(CreateView):
     form_class = UserForm
     model = get_user_model()

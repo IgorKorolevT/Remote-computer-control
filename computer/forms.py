@@ -16,6 +16,7 @@ class ComputerAddForm(forms.Form):
         help_text="Enter the password for this computer.",
     )
 
+
 class ComputerUpdateForm(forms.ModelForm):
     class Meta:
         model = Computer

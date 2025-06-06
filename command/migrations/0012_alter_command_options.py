@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('command', '0011_remove_command_parameters_parameter_command'),
+        ("command", "0011_remove_command_parameters_parameter_command"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='command',
-            options={'ordering': ('name',)},
+            name="command",
+            options={"ordering": ("name",)},
         ),
     ]

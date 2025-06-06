@@ -5,20 +5,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('command', '0002_alter_command_author'),
+        ("command", "0002_alter_command_author"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='command',
-            name='examples',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=200), blank=True, null=True, size=None),
+            model_name="command",
+            name="examples",
+            field=django.contrib.postgres.fields.ArrayField(
+                base_field=models.CharField(max_length=200),
+                blank=True,
+                null=True,
+                size=None,
+            ),
         ),
         migrations.AlterField(
-            model_name='command',
-            name='name',
+            model_name="command",
+            name="name",
             field=models.CharField(unique=True),
         ),
     ]

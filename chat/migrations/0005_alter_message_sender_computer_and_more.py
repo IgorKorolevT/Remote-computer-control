@@ -5,29 +5,42 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('chat', '0004_rename_context_message_text'),
-        ('computer', '0001_initial'),
+        ("chat", "0004_rename_context_message_text"),
+        ("computer", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='message',
-            name='sender_computer',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='sent_messages', to='computer.computer'),
+            model_name="message",
+            name="sender_computer",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="sent_messages",
+                to="computer.computer",
+            ),
         ),
         migrations.AlterField(
-            model_name='message',
-            name='recipient_computer',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='received_messages', to='computer.computer'),
+            model_name="message",
+            name="recipient_computer",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="received_messages",
+                to="computer.computer",
+            ),
         ),
         migrations.AlterField(
-            model_name='room',
-            name='computers',
-            field=models.ManyToManyField(blank=True, related_name='rooms', to='computer.computer'),
+            model_name="room",
+            name="computers",
+            field=models.ManyToManyField(
+                blank=True, related_name="rooms", to="computer.computer"
+            ),
         ),
         migrations.DeleteModel(
-            name='Computer',
+            name="Computer",
         ),
     ]
