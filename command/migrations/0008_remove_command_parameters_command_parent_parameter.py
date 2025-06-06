@@ -5,28 +5,52 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('command', '0007_alter_command_examples'),
+        ("command", "0007_alter_command_examples"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='command',
-            name='parameters',
+            model_name="command",
+            name="parameters",
         ),
         migrations.AddField(
-            model_name='command',
-            name='parent',
-            field=models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='subcommands', to='command.command'),
+            model_name="command",
+            name="parent",
+            field=models.ForeignKey(
+                blank=True,
+                default=None,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="subcommands",
+                to="command.command",
+            ),
         ),
         migrations.CreateModel(
-            name='Parameter',
+            name="Parameter",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('parameter_name', models.CharField()),
-                ('description', models.TextField(blank=True, default='Not provided', null=True)),
-                ('command', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='parameters', to='command.command')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("parameter_name", models.CharField()),
+                (
+                    "description",
+                    models.TextField(blank=True, default="Not provided", null=True),
+                ),
+                (
+                    "command",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="parameters",
+                        to="command.command",
+                    ),
+                ),
             ],
         ),
     ]

@@ -5,20 +5,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('command', '0010_alter_command_parameters'),
+        ("command", "0010_alter_command_parameters"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='command',
-            name='parameters',
+            model_name="command",
+            name="parameters",
         ),
         migrations.AddField(
-            model_name='parameter',
-            name='command',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, related_name='parameters', to='command.command'),
+            model_name="parameter",
+            name="command",
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="parameters",
+                to="command.command",
+            ),
             preserve_default=False,
         ),
     ]

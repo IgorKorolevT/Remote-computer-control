@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('computer', '0001_initial'),
+        ("computer", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='computer',
-            name='os',
-            field=models.CharField(default='Windows'),
+            model_name="computer",
+            name="os",
+            field=models.CharField(default="Windows"),
         ),
     ]

@@ -93,6 +93,7 @@ DATABASES = {
         'PASSWORD': '12345',
         'HOST': 'pgdb',
         'PORT': '5432',
+
     }
 }
 # DATABASES = {

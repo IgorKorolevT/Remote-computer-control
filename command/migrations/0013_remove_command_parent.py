@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('command', '0012_alter_command_options'),
+        ("command", "0012_alter_command_options"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='command',
-            name='parent',
+            model_name="command",
+            name="parent",
         ),
     ]

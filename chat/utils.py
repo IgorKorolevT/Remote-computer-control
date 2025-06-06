@@ -13,11 +13,11 @@ type T_timestamp = Union[datetime, str]
 
 
 def create_message(
-        text: str,
-        sender: UserComputer,
-        recipient: UserComputer = None,
-        room: Room = None,
-        timestamp: T_timestamp = None,
+    text: str,
+    sender: UserComputer,
+    recipient: UserComputer = None,
+    room: Room = None,
+    timestamp: T_timestamp = None,
 ) -> Message:
     """Create message.html and return it"""
     sender_user, sender_computer, recipient_user, recipient_computer, recipient_room = (
@@ -71,11 +71,11 @@ def get_datetime(timestamp: T_timestamp) -> datetime:
 
 
 async def acreate_message(
-        text: str,
-        sender: UserComputer,
-        recipient: UserComputer = None,
-        recipient_room: Room = None,
-        timestamp: T_timestamp = None,
+    text: str,
+    sender: UserComputer,
+    recipient: UserComputer = None,
+    recipient_room: Room = None,
+    timestamp: T_timestamp = None,
 ) -> Message:
     """Create async message.html and return it"""
     message = await sync_to_async(create_message)(
@@ -92,14 +92,20 @@ def _m_computer(user: User, computer: Computer) -> QuerySet:
             | Q(sender_computer=computer, recipient_user=user)
         )
         .select_related("sender_user", "sender_computer")
-        .only("sender_user__username", "sender_computer__name", "timestamp", "text", "sender_computer__nickname")
+        .only(
+            "sender_user__username",
+            "sender_computer__name",
+            "timestamp",
+            "text",
+            "sender_computer__nickname",
+        )
         .order_by("timestamp")
     )
     return messages
 
 
 def computer_context(
-        user: User, chosen_computer: Computer
+    user: User, chosen_computer: Computer
 ) -> Dict[str, QuerySet | User]:
     """Get sent and received messages from chosen_computer. And return context dict"""
     if not isinstance(chosen_computer, Computer):

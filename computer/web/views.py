@@ -14,7 +14,7 @@ from computer.forms import ComputerAddForm, ComputerUpdateForm
 # Create your views here.
 @login_required
 def add_pk(
-        request: HttpRequest,
+    request: HttpRequest,
 ) -> HttpResponse:
     if request.method == "POST":
         form = ComputerAddForm(request.POST)
@@ -40,8 +40,13 @@ class ComputerDetailView(LoginRequiredMixin, DetailView):
     model = Computer
 
     def get_object(self, queryset=None) -> Computer:
-        pk = self.model.objects.filter(users__id=self.request.user.id, name=self.kwargs.get("name")).prefetch_related(
-            "users").first()
+        pk = (
+            self.model.objects.filter(
+                users__id=self.request.user.id, name=self.kwargs.get("name")
+            )
+            .prefetch_related("users")
+            .first()
+        )
         if pk:
             return pk
         raise Http404
@@ -59,13 +64,17 @@ class ComputerUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ComputerUpdateForm
 
     def form_valid(self, form) -> HttpResponse:
-        pk = self.model.objects.filter(users__id=self.request.user.id, name=self.kwargs.get("name")).first()
+        pk = self.model.objects.filter(
+            users__id=self.request.user.id, name=self.kwargs.get("name")
+        ).first()
         if pk:
             return super().form_valid(form)
         raise Http404
 
     def get_object(self, queryset=None) -> Computer:
-        pk = self.model.objects.filter(users__id=self.request.user.id, name=self.kwargs.get("name")).first()
+        pk = self.model.objects.filter(
+            users__id=self.request.user.id, name=self.kwargs.get("name")
+        ).first()
         if pk:
             return pk
         raise Http404
@@ -79,7 +88,9 @@ class ComputerDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("computer:list")
 
     def get_object(self, queryset=None) -> Computer:
-        pk = self.model.objects.filter(users__id=self.request.user.id, name=self.kwargs.get("name")).first()
+        pk = self.model.objects.filter(
+            users__id=self.request.user.id, name=self.kwargs.get("name")
+        ).first()
         if pk:
             return pk
         raise Http404

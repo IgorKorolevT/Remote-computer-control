@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -14,14 +13,27 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Computer',
+            name="Computer",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, unique=True)),
-                ('nickname', models.CharField(blank=True, max_length=100, null=True)),
-                ('password', models.CharField()),
-                ('channel_name', models.CharField(blank=True, null=True, unique=True)),
-                ('users', models.ManyToManyField(related_name='computers', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100, unique=True)),
+                ("nickname", models.CharField(blank=True, max_length=100, null=True)),
+                ("password", models.CharField()),
+                ("channel_name", models.CharField(blank=True, null=True, unique=True)),
+                (
+                    "users",
+                    models.ManyToManyField(
+                        related_name="computers", to=settings.AUTH_USER_MODEL
+                    ),
+                ),
             ],
         ),
     ]

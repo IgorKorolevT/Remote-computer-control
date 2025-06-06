@@ -1,5 +1,4 @@
 # https://docs.djangoproject.com/en/5.2/howto/custom-management-commands/
-import asyncio
 from django.core.management.base import BaseCommand
 from command.parser.commands import parse_commands
 
@@ -44,5 +43,10 @@ class Command(BaseCommand):
         home_url = options["home_url"]
         command_url = options["command_url"]
         update = options["update"]
-        parse_commands(update=update, home_url=home_url, detail_command_url=command_url,
-                       author_username=author_username, os=os)
+        parse_commands(
+            update=update,
+            home_url=home_url,
+            detail_command_url=command_url,
+            author_username=author_username,
+            os=os,
+        )
