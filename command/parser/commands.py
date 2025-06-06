@@ -20,12 +20,16 @@ def _get_command_url(detail_command_url: str, command_url_prefix: str) -> str:
     return urljoin(detail_command_url, command_url_prefix)
 
 
-async def _get_soup_async(session: aiohttp.ClientSession, url: str, features="html.parser"):
-    async with session.get(url) as response:
-        response.raise_for_status()
-        text = await response.text()
-        soup = BeautifulSoup(text, features)
-        return soup
+async def _get_soup_async(session: aiohttp.ClientSession, url: str, features="html.parser") -> BeautifulSoup | None:
+    try:
+        async with session.get(url) as response:
+            response.raise_for_status()
+            text = await response.text()
+            soup = BeautifulSoup(text, features)
+            return soup
+    except asyncio.TimeoutError as e:
+        print("Time out")
+        return None
 
 
 async def create_command(update: bool, author: User, name: str, command: str, description: str, syntax: str,
@@ -49,7 +53,7 @@ async def create_command(update: bool, author: User, name: str, command: str, de
                 await Parameter.objects.acreate(parameter_name=parameter[0], description=parameter[1],
                                                 command=command)
     except IntegrityError as e:
-        print(f"Command {name} has already created")
+        print(f"Command '{name}' has already created")
     return command
 
 
@@ -86,6 +90,8 @@ async def async_parse_command(url: str, update: bool = False, session: aiohttp.C
         return parameters
 
     soup = await _get_soup_async(session, url)
+    if soup is None:
+        return None
     contents = soup.find_all("div", {"class": "content"})
     name = contents[0].find("h1").text
     content = contents[1]
@@ -95,7 +101,7 @@ async def async_parse_command(url: str, update: bool = False, session: aiohttp.C
         examples = find_examples(content)
         parameters = find_parameters(content)
     except AttributeError as e:
-        print(f"Command {name} has no created")
+        print(f"Command '{name}' don't created")
     else:
         await create_command(author=author, name=name, command=name, description=description, syntax=syntax,
                              examples=examples, update=update,
@@ -116,7 +122,8 @@ async def async_parse_commands(home_url: str, detail_command_url: str, author_us
     async with aiohttp.ClientSession() as session:
         try:
             soup = await _get_soup_async(session, home_url)
-
+            if soup is None:
+                print("Can't load home page")
             commands = soup.find_all("a", {"data-linktype": "relative-path"})
             # Delete duplication cscript and wscript
             commands = commands[2:]
@@ -129,8 +136,6 @@ async def async_parse_commands(home_url: str, detail_command_url: str, author_us
             await asyncio.gather(*tasks)
         except aiohttp.ClientError as e:
             print(f"Error fetching main page: {str(e)}")
-        except asyncio.TimeoutError as e:
-            print("Time out")
 
 
 def parse_commands(home_url: str, detail_command_url: str, author_username: str, update: bool = False,
