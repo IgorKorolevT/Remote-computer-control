@@ -6,6 +6,7 @@ from computer.models import Computer
 from django.db.models import QuerySet, Q
 from typing import Dict
 
+
 type UserComputer = Union[User, Computer]
 type T_timestamp = Union[datetime, str]
 
