@@ -4,6 +4,16 @@
 {% block content %}
     <div class="container-fluid">
         <h2>Commands <a class="btn btn-outline-primary" href="{% url "command:create" %}">+</a></h2>
+        <form action="{% url 'command:list' %}" method="get">
+            <label>
+                <input
+                        type="search"
+                        name="search"
+                        placeholder="Search by name..."
+                        class="form-control"
+                />
+            </label>
+        </form>
         <ul class="list ms-4">
             {% for object in object_list %}
                 <li>

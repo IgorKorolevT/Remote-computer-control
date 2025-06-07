@@ -25,5 +25,6 @@ urlpatterns = [
     path("computer/", include("computer.urls"), name="computer"),
     path("accounts/", include("django.contrib.auth.urls")),
     path("commands/", include("command.urls")),
+    path("videos/", include("video.urls")),
 ]
 # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))

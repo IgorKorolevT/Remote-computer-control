@@ -10,13 +10,20 @@ from django.views.generic import (
 )
 from .forms import CommandCreatForm
 from command.models import Command
+from django.contrib.postgres.search import SearchVector, SearchQuery, TrigramSimilarity
 
 
 # Create your views here.
 class CommandListView(ListView):
     model = Command
-    queryset = Command.objects.all().order_by("name")
     paginate_by = 25
+
+    def get_queryset(self):
+        search = self.request.GET.get("search")
+        if search:
+            return Command.objects.annotate(similarity=TrigramSimilarity("name", search)).filter(
+                similarity__gt=0.1).order_by('-similarity')
+        return Command.objects.all()
 
 
 class CommandDetailView(DetailView):

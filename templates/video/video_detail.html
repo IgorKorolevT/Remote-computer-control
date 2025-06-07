@@ -1,0 +1,30 @@
+{% extends 'base_card.html' %}
+{% load static %}
+{% block title %}Video list{% endblock %}
+
+{% block top_content %}
+    <h1>Video: <strong>{{ object.name }}</strong></h1>
+{% endblock %}
+
+{% block card_content %}
+    <h2>Description</h2>
+    <p class="card-text">
+        {{ object.description }}
+    </p>
+    {% if object.preview %}
+        <a href="{{ object.url }}">
+            <img src="{{ MEDIA_URL }}{{ object.preview }}" alt="Preview doesn't download">
+        </a>
+    {% else %}
+        <iframe width="560" height="315" src="{{ object.url }}"
+                title="YouTube video player" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    {% endif %}
+{% endblock %}
+
+{% block bottom_content %}
+    <a href="{{ object.url }}" target="_blank" class="btn btn-outline-primary">Video</a>
+    <a href="{% url 'video:update' object.id %}" class="btn btn-outline-primary">update video</a>
+    <a href="{% url 'video:delete' object.id %}" class="btn btn-outline-primary">delete video</a>
+{% endblock %}

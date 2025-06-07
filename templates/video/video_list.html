@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Video list{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <h2>Video <a class="btn btn-outline-primary" href="{% url "video:create" %}">+</a></h2>
+        <ul class="list ms-4">
+            {% for object in object_list %}
+                <li>
+                    <a href="{{ object.url }}" target="_blank">{{ object.name }}</a>
+                    <a class="btn btn-outline-primary" href="{% url 'video:detail' object.id %}">detail</a>
+                </li>
+            {% empty %}
+                <li>No videos.</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
