@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import Union
-from asgiref.sync import sync_to_async
 from user.models import User
 from chat.models import Room, Message
 from computer.models import Computer
@@ -11,7 +10,7 @@ type UserComputer = Union[User, Computer]
 type T_timestamp = Union[datetime, str]
 
 
-def create_message(
+async def create_message(
     text: str,
     sender: UserComputer,
     recipient: UserComputer = None,
@@ -53,7 +52,7 @@ def create_message(
         recipient_user=recipient_user,
         recipient_computer=recipient_computer,
     )
-    message.save()
+    await message.asave()
     return message
 
 
@@ -77,7 +76,7 @@ async def acreate_message(
     timestamp: T_timestamp = None,
 ) -> Message:
     """Create async message.html and return it"""
-    message = await sync_to_async(create_message)(
+    message = await create_message(
         text, sender, recipient, recipient_room, timestamp
     )
     return message

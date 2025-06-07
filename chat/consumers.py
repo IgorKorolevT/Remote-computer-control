@@ -1,5 +1,4 @@
 import json
-from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from computer.models import Computer
 from chat.utils import acreate_message, SenderTypes
@@ -21,7 +20,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def _set_channel_name(self, channel_name: str = None) -> None:
         self.user.channel_name = channel_name
-        await sync_to_async(self.user.save)()
+        await self.user.asave()
 
 
 class ChatComputerConsumer(ChatConsumer):
@@ -31,7 +30,7 @@ class ChatComputerConsumer(ChatConsumer):
         message = data["message"]
         pk_name = data["receiver"]
         try:
-            pk = await sync_to_async(Computer.objects.get)(name=pk_name)
+            pk = await Computer.objects.aget(name=pk_name)
             ms = await acreate_message(text=message, sender=self.user, recipient=pk)
             base_context = {
                 "message": ms.text,
@@ -81,7 +80,7 @@ class ComputerConsumer(AsyncWebsocketConsumer):
         if name and password:
             name, password = name.decode(), password.decode()
             try:
-                pk = await sync_to_async(Computer.objects.get)(name=name)
+                pk = await Computer.objects.aget(name=name)
                 if not pk.check_password(password):
                     await self.close(code=4401)
                 self.pk = pk
@@ -101,7 +100,7 @@ class ComputerConsumer(AsyncWebsocketConsumer):
         text = data["message"]
 
         try:
-            user = await sync_to_async(User.objects.get)(pk=user_id)
+            user = await User.objects.aget(pk=user_id)
             ms = await acreate_message(text=text, sender=self.pk, recipient=user)
             if user.channel_name:
                 context = {
@@ -123,4 +122,4 @@ class ComputerConsumer(AsyncWebsocketConsumer):
     async def _set_channel_name(self, channel_name: str = None) -> None:
         if hasattr(self, "pk"):
             self.pk.channel_name = channel_name
-            await sync_to_async(self.pk.save)()
+            await self.pk.asave()
