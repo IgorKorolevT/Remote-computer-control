@@ -18,6 +18,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from debug_toolbar.toolbar import debug_toolbar_urls
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls, name="admin"),
@@ -26,5 +28,6 @@ urlpatterns = [
     path("computer/", include("computer.urls"), name="computer"),
     path("accounts/", include("django.contrib.auth.urls")),
     path("commands/", include("command.urls")),
-] + debug_toolbar_urls()
+    path("videos/", include("video.urls")),
+] + debug_toolbar_urls() + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))

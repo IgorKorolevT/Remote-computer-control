@@ -1,0 +1,11 @@
+{% extends 'base_confirm_delete.html' %}
+
+{% block title %}Delete video{% endblock %}
+
+{% block h_text %}Delete video{% endblock %}
+{% block text %}
+    <p>
+        Are you sure you want to delete the video<strong>"{{ object.name }}"</strong>?
+    </p>
+    <p>{{ object.description }}</p>
+{% endblock %}

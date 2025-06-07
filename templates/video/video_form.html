@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% block title %}Video{% endblock %}
+
+{% block content %}
+  <h2>{{ object|yesno:"Update the video,Create new video" }}</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input type="submit" class="btn btn-outline-primary" value="Submit">
+  </form>
+{% endblock %}
