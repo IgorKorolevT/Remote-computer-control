@@ -5,6 +5,6 @@ from computer.web import urls as web_urls
 app_name = "computer"
 
 urlpatterns = [
-    path("api/", include(api_urls)),
+    path("api/v1/", include(api_urls)),
     path("", include(web_urls)),
 ]
