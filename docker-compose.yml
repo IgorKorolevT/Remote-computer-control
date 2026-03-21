@@ -27,7 +27,7 @@ services:
       - "5432:5432"
     container_name: pgdb
     volumes:
-      - pgdbdata:/var/lib/postgresql/data/
+      - pgdbdata:/var/lib/postgresql/
 
 
   nginx:
