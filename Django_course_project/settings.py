@@ -26,10 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["www.igorkorolevcourseproject.duckdns.org", "igorkorolevcourseproject.duckdns.org", "34.169.244.15",
-                 "localhost", "127.0.0.1"]
+                 "localhost", "127.0.0.1", "192.168.50.16"]
 # Application definition
 
 INSTALLED_APPS = [

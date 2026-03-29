@@ -27,7 +27,7 @@ services:
       - "5432:5432"
     container_name: pgdb
     volumes:
-      - pgdbdata:/var/lib/postgresql/data/
+      - pgdbdata:/var/lib/postgresql/
 
 
   nginx:
@@ -39,7 +39,7 @@ services:
       - static:/app/staticfiles
       - media:/app/media
       - ./nginx.conf:/etc/nginx/nginx.conf
-      - /etc/letsencrypt/:/etc/letsencrypt/
+      - ./ssl_certificate:/etc/nginx/ssl_certificate
     depends_on:
       - web
 
