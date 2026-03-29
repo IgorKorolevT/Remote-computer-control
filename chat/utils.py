@@ -5,6 +5,8 @@ from chat.models import Room, Message
 from computer.models import Computer
 from django.db.models import QuerySet, Q
 from typing import Dict
+from django.utils import timezone
+
 
 type UserComputer = Union[User, Computer]
 type T_timestamp = Union[datetime, str]
@@ -63,7 +65,7 @@ def get_datetime(timestamp: T_timestamp) -> datetime:
     elif isinstance(timestamp, datetime):
         return timestamp
     elif timestamp is None:
-        return datetime.now()
+        return timezone.now()
     else:
         raise TypeError
 
