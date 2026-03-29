@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     "computer",
     "crispy_forms",
     "crispy_bootstrap5",
-    'video'  # Videos
+    "video",  # Videos
+    "event",
 ]
 
 # CRISPY

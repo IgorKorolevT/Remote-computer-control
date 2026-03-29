@@ -6,6 +6,8 @@ from computer.models import Computer
 from django.db.models import QuerySet, Q
 from typing import Dict
 from django.utils import timezone
+from channels.layers import get_channel_layer
+from django.contrib.auth import get_user_model
 
 
 type UserComputer = Union[User, Computer]
@@ -126,3 +128,32 @@ class SenderTypes:
     @staticmethod
     def context() -> Dict[str, str]:
         return {"User": SenderTypes.USER, "Computer": SenderTypes.COMPUTER}
+
+User = get_user_model() # for typing, can make TYPE
+
+async def send_message_to_computer(user: User, computer_name: str, text: str):
+    """
+    Send message to computer from user.
+    If it online otherwise do nothing
+    """
+
+    try:
+        computer = await Computer.objects.aget(name=computer_name)
+        if not computer.channel_name:
+            return
+
+        channel_layer = get_channel_layer()
+        message = await acreate_message(text, user, computer)
+
+        await channel_layer.send(
+            computer.channel_name,
+            {
+                "type_sender": SenderTypes.USER,
+                "type": "pk_private_message",
+                "message": message.text,
+                "sender": user.id,
+                "date": message.get_timestamp
+            }
+        )
+    except Computer.DoesNotExist:
+        pass

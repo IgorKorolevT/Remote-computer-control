@@ -26,5 +26,6 @@ urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("commands/", include("command.urls")),
     path("videos/", include("video.urls")),
+    path("events/", include("event.urls")),
 ]
 # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))
