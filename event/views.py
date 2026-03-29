@@ -1,15 +1,63 @@
-from django.contrib.auth.decorators import login_required, async_to_sync
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import Http404, HttpResponse
+from django.urls import reverse, reverse_lazy
+from django.views.generic import (
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
+from .forms import ProgramCreatForm
+from event.models import Program
 
-from chat.utils import send_message_to_computer
+
+class ProgramListView(LoginRequiredMixin, ListView):
+    model = Program
+    paginate_by = 25
+
+    def get_queryset(self):
+        return Program.objects.all()
 
 
-@login_required
-def block(request: HttpRequest, name: str) -> HttpResponse:
-    user = request.user
-    computers = user.computers.all()
-    chosen_computer = get_object_or_404(computers, name=name)
-    async_to_sync(send_message_to_computer)(user, chosen_computer, "taskkill /IM notepad.exe /F")
-    return render(request, "event/block.html")
+class ProgramDetailView(LoginRequiredMixin, DetailView):
+    model = Program
+    queryset = Program.objects.select_related("user").prefetch_related("computers")
 
+
+class ProgramCreateView(LoginRequiredMixin, CreateView):
+    model = Program
+    form_class = ProgramCreatForm
+
+    def form_valid(self, form) -> HttpResponse:
+        form.instance.user = self.request.user
+        self.object = form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self) -> str:
+        return reverse("program:detail", kwargs={"pk": self.object.pk})
+
+
+class ProgramUpdateView(LoginRequiredMixin, UpdateView):
+    model = Program
+    form_class = ProgramCreatForm
+
+    def get_success_url(self) -> str:
+        return reverse("program:detail", kwargs={"pk": self.object.pk})
+
+    def get_object(self, queryset=None) -> Program:
+        program = self.request.user.programs.filter(pk=self.kwargs.get("pk")).first()
+        if program:
+            return program
+        raise Http404
+
+
+class ProgramDeleteView(LoginRequiredMixin, DeleteView):
+    model = Program
+    success_url = reverse_lazy("program:list")
+
+    def get_object(self, queryset=None) -> Program:
+        program = self.request.user.programs.filter(pk=self.kwargs.get("pk")).first()
+        if program:
+            return program
+        raise Http404

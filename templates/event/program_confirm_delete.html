@@ -1,0 +1,10 @@
+{% extends 'base_confirm_delete.html' %}
+
+{% block title %}Delete program name{% endblock %}
+
+{% block h_text %}Delete program name{% endblock %}
+{% block text %}
+    <p>
+        Are you sure you want to delete the program <strong>"{{ object.name }}"</strong> from monitoring?<br>
+    </p>
+{% endblock %}

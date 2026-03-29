@@ -1,0 +1,21 @@
+{% extends 'base_card.html' %}
+{% block title %}Program detail{% endblock %}
+
+{% block top_content %}
+    <h1>Program: <strong>{{ object.name }}</strong></h1>
+{% endblock %}
+
+{% block card_content %}
+    <p class="card-text">
+        <strong>Author:</strong> {{ object.user.username }}
+    </p>
+
+
+{% endblock %}
+
+{% block bottom_content %}
+    {% if object.user.id == user.id %}
+        <a href="{% url 'program:update' object.id %}" class="btn btn-outline-primary">Update program name</a>
+        <a href="{% url 'program:delete' object.id %}" class="btn btn-outline-danger">Delete program from monitoring</a>
+    {% endif %}
+{% endblock %}
