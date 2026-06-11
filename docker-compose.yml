@@ -15,6 +15,7 @@ services:
 
   redis:
     image: redis:7
+    container_name: computer_control_redis
 
   postgres:
     image: postgres
