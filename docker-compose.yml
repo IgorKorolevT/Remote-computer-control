@@ -30,6 +30,16 @@ services:
     volumes:
       - pgdbdata:/var/lib/postgresql/
 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_web
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: SecretPassword123
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
 
   nginx:
     image: nginx:latest
