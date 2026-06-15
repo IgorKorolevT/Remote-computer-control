@@ -518,3 +518,8 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,pycharm+all,pycharm+iml,python,django,pycharm
+
+/ssl_certificate
+ssl_certificate
+*.crt
+*.key
