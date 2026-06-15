@@ -173,7 +173,7 @@ CHANNEL_LAYERS = {
 }
 
 # debug_tools
-# INTERNAL_IPS = ["127.0.0.1"]
+INTERNAL_IPS = ["127.0.0.1", "192.168.50.16"]
 
 # Email
 # https://docs.djangoproject.com/en/5.1/topics/email/#defining-a-custom-email-backend
@@ -194,7 +194,7 @@ REST_FRAMEWORK = {
     ]
 }
 
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-# SECURE_SSL_REDIRECT = True
-# SESSION_COOKIE_SECURE = True
-# CSRF_COOKIE_SECURE = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
