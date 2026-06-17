@@ -13,6 +13,20 @@ services:
       - redis
       - postgres
 
+  worker:
+    build:
+      context: .
+    container_name: worker
+    volumes:
+      - .:/app
+      - static:/app/staticfiles
+      - media:/app/media
+    command: > 
+      sh -c "celery -A Django_course_project worker -l INFO"
+    depends_on:
+      - web
+      - redis
+
   redis:
     image: redis:7
     container_name: computer_control_redis
