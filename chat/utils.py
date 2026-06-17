@@ -124,17 +124,20 @@ def computer_context(
 class SenderTypes:
     USER = "user"
     COMPUTER = "computer"
+    SYSTEM = "system"
 
     @staticmethod
     def context() -> Dict[str, str]:
-        return {"User": SenderTypes.USER, "Computer": SenderTypes.COMPUTER}
+        return {"User": SenderTypes.USER, "Computer": SenderTypes.COMPUTER, "System": SenderTypes.SYSTEM}
 
 User = get_user_model() # for typing, can make TYPE
 
-async def send_message_to_computer(user: User, computer_name: str, text: str):
+async def send_message_to_computer(user: User, computer_name: str, text: str, is_create_message: bool = True):
     """
     Send message to computer from user.
     If it online otherwise do nothing
+
+    Can choose save message to db or not
     """
 
     try:
@@ -143,16 +146,23 @@ async def send_message_to_computer(user: User, computer_name: str, text: str):
             return
 
         channel_layer = get_channel_layer()
-        message = await acreate_message(text, user, computer)
+
+        send_text, send_date = text, timezone.now()
+
+        if is_create_message:
+            # create message only if it needs
+            message = await acreate_message(text, user, computer)
+            send_text =  message.text
+            send_date = message.get_timestamp
 
         await channel_layer.send(
             computer.channel_name,
             {
                 "type_sender": SenderTypes.USER,
-                "type": "pk_private_message",
-                "message": message.text,
+                "type": "pk_system_message",
+                "message": send_text,
                 "sender": user.id,
-                "date": message.get_timestamp
+                "date": send_date
             }
         )
     except Computer.DoesNotExist:
