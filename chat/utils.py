@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 from typing import Union
 from user.models import User
@@ -10,18 +11,23 @@ from channels.layers import get_channel_layer
 from django.contrib.auth import get_user_model
 
 
-type UserComputer = Union[User, Computer]
+type User_or_Computer = Union[User, Computer]
 type T_timestamp = Union[datetime, str]
 
 
 async def create_message(
     text: str,
-    sender: UserComputer,
-    recipient: UserComputer = None,
+    sender: User_or_Computer,
+    recipient: User_or_Computer = None,
     room: Room = None,
     timestamp: T_timestamp = None,
 ) -> Message:
-    """Create message.html and return it"""
+    """
+    Create message and return it
+
+    Notes:
+         - don't save it to db
+    """
     sender_user, sender_computer, recipient_user, recipient_computer, recipient_room = (
         None,
         None,
@@ -56,7 +62,7 @@ async def create_message(
         recipient_user=recipient_user,
         recipient_computer=recipient_computer,
     )
-    await message.asave()
+
     return message
 
 
@@ -71,18 +77,19 @@ def get_datetime(timestamp: T_timestamp) -> datetime:
     else:
         raise TypeError
 
-
+#TODO rename
 async def acreate_message(
     text: str,
-    sender: UserComputer,
-    recipient: UserComputer = None,
+    sender: User_or_Computer,
+    recipient: User_or_Computer = None,
     recipient_room: Room = None,
     timestamp: T_timestamp = None,
 ) -> Message:
-    """Create async message.html and return it"""
+    """Create/Save async message and return it"""
     message = await create_message(
         text, sender, recipient, recipient_room, timestamp
     )
+    await message.asave()
     return message
 
 
@@ -132,38 +139,47 @@ class SenderTypes:
 
 User = get_user_model() # for typing, can make TYPE
 
-async def send_message_to_computer(user: User, computer_name: str, text: str, is_create_message: bool = True):
+async def send_message_to_computer(user_id: int, computer_name: str, text: str, is_create_message: bool = True):
     """
-    Send message to computer from user.
+    Send message to computer from system.
     If it online otherwise do nothing
 
     Can choose save message to db or not
     """
 
     try:
+        user = await User.objects.aget(pk=user_id)
+
         computer = await Computer.objects.aget(name=computer_name)
         if not computer.channel_name:
             return
 
         channel_layer = get_channel_layer()
 
-        send_text, send_date = text, timezone.now()
+        reply_channel = await channel_layer.new_channel(prefix="reply.")
 
+        # create message only if it needs
         if is_create_message:
-            # create message only if it needs
             message = await acreate_message(text, user, computer)
-            send_text =  message.text
-            send_date = message.get_timestamp
+        else:
+            message = await create_message(text, user, computer)
 
         await channel_layer.send(
             computer.channel_name,
             {
-                "type_sender": SenderTypes.USER,
+                "type_sender": SenderTypes.SYSTEM,
                 "type": "pk_system_message",
-                "message": send_text,
-                "sender": user.id,
-                "date": send_date
+                "message": message.text,
+                "sender": int(user.id),
+                "date": message.get_timestamp,
+                "reply_to": reply_channel,
+                "correlation_id": str(uuid.uuid4())
             }
         )
+
+        response = await channel_layer.receive(reply_channel)
+        return response
     except Computer.DoesNotExist:
+        pass
+    except User.DoesNotExist:
         pass

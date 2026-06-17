@@ -1,9 +1,8 @@
 import json
-from django.utils import timezone
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 from computer.models import Computer
-from chat.utils import acreate_message, SenderTypes
+from chat.utils import acreate_message, SenderTypes, create_message
 from user.models import User
 
 
@@ -99,25 +98,32 @@ class ComputerConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data: str = None, bytes_data=None):
         """Receive message from websocket"""
         data = json.loads(text_data)
-        user_id = data["receiver"]
         text = data["message"]
-        type_message = data["type"] # type exist in  builtins
+        type_message = data["type"]
 
         if type_message == SenderTypes.SYSTEM:
             try:
-                user = await User.objects.aget(pk=user_id)
-                if user.channel_name:
-                    context = {
-                        "message": text,
-                        "sender": self.pk.name,
-                        "date": timezone.now(),
-                        "type_sender": SenderTypes.COMPUTER,
-                        "type": "user_private_message",
-                    }
-                    await self.channel_layer.send(user.channel_name, context)
-            except User.DoesNotExist:
-                pass  # TODO: send message that user id isn't correct
+                reply_to = data["reply_to"]
+                correlation_id = data["correlation_id"]
+                ms = await create_message(text=text, sender=self.pk)
+
+                context = {
+                    "message": ms.text,
+                    "sender": self.pk.name,
+                    "date": ms.get_timestamp,
+                    "type_sender": type_message,
+                    "correlation_id": correlation_id,
+                    "type": "task.result",
+                    "reply_to": reply_to,
+                }
+
+                await self.channel_layer.send(reply_to, context)
+
+            except KeyError:
+                pass
         else:
+
+            user_id = data["receiver"]
             try:
                 user = await User.objects.aget(pk=user_id)
                 ms = await acreate_message(text=text, sender=self.pk, recipient=user)
