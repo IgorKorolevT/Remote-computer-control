@@ -156,7 +156,7 @@ async def send_message_to_computer(user_id: int, computer_name: str, text: str, 
 
         channel_layer = get_channel_layer()
 
-        reply_channel = await channel_layer.new_channel(prefix="reply.")
+        reply_channel = await channel_layer.new_channel(prefix="reply")
 
         # create message only if it needs
         if is_create_message:

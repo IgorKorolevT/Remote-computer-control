@@ -105,7 +105,7 @@ class ComputerConsumer(AsyncWebsocketConsumer):
             try:
                 reply_to = data["reply_to"]
                 correlation_id = data["correlation_id"]
-                ms = await create_message(text=text, sender=self.pk)
+                ms = await create_message(text=text, sender=self.pk, room=reply_to)
 
                 context = {
                     "message": ms.text,
