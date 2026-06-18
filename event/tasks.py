@@ -10,7 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 @shared_task
-def kill_programs_task(user_id: int, computer_name: str, programs: List[Program]):
+def kill_programs_task(user_id: int, computer_name: str):
     """Don't create/save message to db"""
     task_list = "tasklist"
     result = async_to_sync(send_message_to_computer)(user_id, computer_name, task_list, False)
