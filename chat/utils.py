@@ -1,3 +1,4 @@
+import logging
 import uuid
 from datetime import datetime
 from typing import Union
@@ -10,17 +11,16 @@ from django.utils import timezone
 from channels.layers import get_channel_layer
 from django.contrib.auth import get_user_model
 
-
 type User_or_Computer = Union[User, Computer]
 type T_timestamp = Union[datetime, str]
 
 
 async def create_message(
-    text: str,
-    sender: User_or_Computer,
-    recipient: User_or_Computer = None,
-    room: Room = None,
-    timestamp: T_timestamp = None,
+        text: str,
+        sender: User_or_Computer,
+        recipient: User_or_Computer = None,
+        room: Room = None,
+        timestamp: T_timestamp = None,
 ) -> Message:
     """
     Create message and return it
@@ -77,13 +77,14 @@ def get_datetime(timestamp: T_timestamp) -> datetime:
     else:
         raise TypeError
 
-#TODO rename
+
+# TODO rename
 async def acreate_message(
-    text: str,
-    sender: User_or_Computer,
-    recipient: User_or_Computer = None,
-    recipient_room: Room = None,
-    timestamp: T_timestamp = None,
+        text: str,
+        sender: User_or_Computer,
+        recipient: User_or_Computer = None,
+        recipient_room: Room = None,
+        timestamp: T_timestamp = None,
 ) -> Message:
     """Create/Save async message and return it"""
     message = await create_message(
@@ -114,7 +115,7 @@ def _m_computer(user: User, computer: Computer) -> QuerySet:
 
 
 def computer_context(
-    user: User, chosen_computer: Computer
+        user: User, chosen_computer: Computer
 ) -> Dict[str, QuerySet | User]:
     """Get sent and received messages from chosen_computer. And return context dict"""
     if not isinstance(chosen_computer, Computer):
@@ -137,7 +138,10 @@ class SenderTypes:
     def context() -> Dict[str, str]:
         return {"User": SenderTypes.USER, "Computer": SenderTypes.COMPUTER, "System": SenderTypes.SYSTEM}
 
-User = get_user_model() # for typing, can make TYPE
+
+User = get_user_model()  # for typing, can make TYPE
+logger_send_message_to_computer = logging.getLogger(__name__ + ".send_message_to_computer")
+
 
 async def send_message_to_computer(user_id: int, computer_name: str, text: str, is_create_message: bool = True):
     """
@@ -152,6 +156,7 @@ async def send_message_to_computer(user_id: int, computer_name: str, text: str, 
 
         computer = await Computer.objects.aget(name=computer_name)
         if not computer.channel_name:
+            logger_send_message_to_computer.warning(f"computer {computer.name} doesn't have channel_name")
             return
 
         channel_layer = get_channel_layer()
@@ -164,6 +169,8 @@ async def send_message_to_computer(user_id: int, computer_name: str, text: str, 
         else:
             message = await create_message(text, user, computer)
 
+        correlation_id = str(uuid.uuid4())
+
         await channel_layer.send(
             computer.channel_name,
             {
@@ -173,13 +180,18 @@ async def send_message_to_computer(user_id: int, computer_name: str, text: str, 
                 "sender": int(user.id),
                 "date": message.get_timestamp,
                 "reply_to": reply_channel,
-                "correlation_id": str(uuid.uuid4())
+                "correlation_id": correlation_id
             }
         )
 
         response = await channel_layer.receive(reply_channel)
+
+        if response.get("correlation_id") != correlation_id:
+            # TODO do something
+            raise ValueError(f"Correlation id isn't same {response.get("correlation_id")}-{correlation_id}")
+
         return response
-    except Computer.DoesNotExist:
-        pass
-    except User.DoesNotExist:
-        pass
+    except Computer.DoesNotExist as e:
+        logger_send_message_to_computer.error(e)
+    except User.DoesNotExist as e:
+        logger_send_message_to_computer.error(e)
