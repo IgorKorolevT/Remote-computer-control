@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.postgres",
     "channels",
     "rest_framework",
+    'django_celery_beat',
     "chat",
     "user",
     "command",
@@ -180,6 +181,7 @@ REDIS_URL = f"redis://{os.getenv("REDIS_HOST")}:{os.getenv("REDIS_PORT")}/1"
 CELERY_BROKER_URL = REDIS_URL
 CELERY_RESULT_BACKEND = REDIS_URL
 
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 # debug_tools
 INTERNAL_IPS = ["127.0.0.1", "192.168.50.16"]
