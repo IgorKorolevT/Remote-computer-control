@@ -43,13 +43,15 @@ INSTALLED_APPS = [
     "django.contrib.postgres",
     "channels",
     "rest_framework",
+    'django_celery_beat',
     "chat",
     "user",
     "command",
     "computer",
     "crispy_forms",
     "crispy_bootstrap5",
-    'video'  # Videos
+    "video",  # Videos
+    "event",
 ]
 
 # CRISPY
@@ -171,6 +173,15 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+# Celery
+# TODO: db number('/1') in env?
+REDIS_URL = f"redis://{os.getenv("REDIS_HOST")}:{os.getenv("REDIS_PORT")}/1"
+
+CELERY_BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = REDIS_URL
+
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 # debug_tools
 INTERNAL_IPS = ["127.0.0.1", "192.168.50.16"]

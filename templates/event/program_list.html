@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Program List{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <h2>Programs that are monitored <a class="btn btn-outline-primary" href="{% url "program:create" %}">+</a></h2>
+        <ul class="list ms-4">
+            {% for object in object_list %}
+                <li>
+                    <a href="{% url 'program:detail' object.id %}">{{ object.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
