@@ -523,3 +523,15 @@ $RECYCLE.BIN/
 ssl_certificate
 *.crt
 *.key
+
+# Program
+/static/program
+/static/program/ProgramRemoteControl.zip
+/static/program/*.zip
+
+# SSL certificate
+/ssl_certificate/
+/ssl_certificate/server.crt
+/ssl_certificate/server.key
+.key
+.crt
