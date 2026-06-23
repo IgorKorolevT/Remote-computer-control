@@ -38,6 +38,28 @@
                 <label class="form-check-label fw-bold" for="status-toggle">monitoring</label>
             </div>
 
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Every</label>
+                    <input type="number"
+                           class="form-control"
+                           name="every"
+                           value="5"
+                           min="1"
+                           required>
+                </div>
+
+                <div class="col-md-5">
+                    <label class="form-label">Period</label>
+                    <select class="form-select" name="period" required>
+                        <option value="MINUTES">Minutes</option>
+                        <option value="HOURS">Hours</option>
+                        <option value="DAYS">Days</option>
+                        <option value="SECONDS">Seconds</option>
+                    </select>
+                </div>
+            </div>
+        
             <button type="submit" class="btn btn-success mt-2">
                 <i class="bi bi-check-lg"></i> Save Status
             </button>

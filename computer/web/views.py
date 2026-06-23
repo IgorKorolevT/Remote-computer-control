@@ -9,6 +9,8 @@ from django.urls import reverse
 from django.views.generic import DetailView, ListView, UpdateView, DeleteView
 from rest_framework.reverse import reverse_lazy
 from django.views.decorators.http import require_POST
+from rest_framework.status import HTTP_502_BAD_GATEWAY
+
 from computer.models import Computer
 from computer.forms import ComputerAddForm, ComputerUpdateForm
 from django_celery_beat.models import PeriodicTask, IntervalSchedule
@@ -138,9 +140,20 @@ def toggle_computer(request, name):
     task_name = generate_same_name(user.id, computer.name)
 
     if is_on:
+        every = int(request.POST.get('every'))
+        get_period: str = request.POST.get('period').lower()
+        period = None
+
+        for period_choice in IntervalSchedule.PERIOD_CHOICES:
+            if get_period in period_choice:
+                period = period_choice[0]
+
+        if period is None:
+            raise Http404
+
         schedule, _ = IntervalSchedule.objects.get_or_create(
-            every=5,
-            period=IntervalSchedule.MINUTES
+            every=every,
+            period=period
         )
 
         PeriodicTask.objects.update_or_create(
