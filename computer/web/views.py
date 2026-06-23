@@ -134,7 +134,7 @@ def toggle_computer(request, name):
 
         for period_choice in IntervalSchedule.PERIOD_CHOICES:
             if get_period in period_choice:
-                period = period_choice
+                period = period_choice[0]
 
         if period is None:
             raise Http404
