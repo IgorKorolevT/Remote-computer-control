@@ -33,7 +33,8 @@
                        class="form-check-input"
                        id="status-toggle"
                        value="On"
-                       name="status">
+                       name="status"
+                       {% if is_monitoring %}checked{% endif %}>
                 <label class="form-check-label fw-bold" for="status-toggle">monitoring</label>
             </div>
 
