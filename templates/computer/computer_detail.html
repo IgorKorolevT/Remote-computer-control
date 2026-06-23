@@ -26,5 +26,21 @@
     {% if user in object.users.all %}
         <a href="{% url 'computer:update' object.name %}" class="btn btn-outline-primary">Update computer</a>
         <a href="{% url 'computer:delete' object.name %}" class="btn btn-outline-danger">Delete computer</a>
+        <form method="post" action="{% url 'computer:toggle' object.name %}" class="mt-3">
+            {% csrf_token %}
+            <div class="form-check form-switch">
+                <input type="checkbox"
+                       class="form-check-input"
+                       id="status-toggle"
+                       value="On"
+                       name="status"
+                       {% if is_monitoring %}checked{% endif %}>
+                <label class="form-check-label fw-bold" for="status-toggle">monitoring</label>
+            </div>
+
+            <button type="submit" class="btn btn-success mt-2">
+                <i class="bi bi-check-lg"></i> Save Status
+            </button>
+        </form>
     {% endif %}
 {% endblock %}

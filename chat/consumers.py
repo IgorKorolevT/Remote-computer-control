@@ -1,7 +1,8 @@
 import json
+
 from channels.generic.websocket import AsyncWebsocketConsumer
 from computer.models import Computer
-from chat.utils import acreate_message, SenderTypes
+from chat.utils import acreate_message, SenderTypes, create_message
 from user.models import User
 
 
@@ -95,27 +96,58 @@ class ComputerConsumer(AsyncWebsocketConsumer):
         await self._set_channel_name()
 
     async def receive(self, text_data: str = None, bytes_data=None):
+        """Receive message from websocket"""
         data = json.loads(text_data)
-        user_id = data["receiver"]
         text = data["message"]
+        type_message = data["type"]
 
-        try:
-            user = await User.objects.aget(pk=user_id)
-            ms = await acreate_message(text=text, sender=self.pk, recipient=user)
-            if user.channel_name:
+        if type_message == SenderTypes.SYSTEM:
+            try:
+                reply_to = data["reply_to"]
+                correlation_id = data["correlation_id"]
+                ms = await create_message(text=text, sender=self.pk, room=reply_to)
+
                 context = {
                     "message": ms.text,
                     "sender": self.pk.name,
                     "date": ms.get_timestamp,
-                    "type_sender": SenderTypes.COMPUTER,
-                    "type": "user_private_message",
+                    "type_sender": type_message,
+                    "correlation_id": correlation_id,
+                    "type": "task.result",
+                    "reply_to": reply_to,
                 }
-                await self.channel_layer.send(user.channel_name, context)
-        except User.DoesNotExist:
-            pass  # TODO: send message that user id isn't correct
+
+                await self.channel_layer.send(reply_to, context)
+
+            except KeyError:
+                pass
+        else:
+
+            user_id = data["receiver"]
+            try:
+                user = await User.objects.aget(pk=user_id)
+                ms = await acreate_message(text=text, sender=self.pk, recipient=user)
+                if user.channel_name:
+                    context = {
+                        "message": ms.text,
+                        "sender": self.pk.name,
+                        "date": ms.get_timestamp,
+                        "type_sender": SenderTypes.COMPUTER,
+                        "type": "user_private_message",
+                    }
+                    await self.channel_layer.send(user.channel_name, context)
+            except User.DoesNotExist:
+                pass  # TODO: send message that user id isn't correct
 
     async def pk_private_message(self, event):
+        """For messages that came from the **user**"""
         event["type"] = "base"  # TODO: type message
+        data = json.dumps(event)
+        await self.send(text_data=data)
+
+    async def pk_system_message(self, event):
+        """For messages that came from the **system**"""
+        event["type"] = "system"
         data = json.dumps(event)
         await self.send(text_data=data)
 

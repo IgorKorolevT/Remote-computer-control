@@ -1,3 +1,5 @@
+import logging
+import uuid
 from datetime import datetime
 from typing import Union
 from user.models import User
@@ -6,20 +8,26 @@ from computer.models import Computer
 from django.db.models import QuerySet, Q
 from typing import Dict
 from django.utils import timezone
+from channels.layers import get_channel_layer
+from django.contrib.auth import get_user_model
 
-
-type UserComputer = Union[User, Computer]
+type User_or_Computer = Union[User, Computer]
 type T_timestamp = Union[datetime, str]
 
 
 async def create_message(
-    text: str,
-    sender: UserComputer,
-    recipient: UserComputer = None,
-    room: Room = None,
-    timestamp: T_timestamp = None,
+        text: str,
+        sender: User_or_Computer,
+        recipient: User_or_Computer = None,
+        room: Room = None,
+        timestamp: T_timestamp = None,
 ) -> Message:
-    """Create message.html and return it"""
+    """
+    Create message and return it
+
+    Notes:
+         - don't save it to db
+    """
     sender_user, sender_computer, recipient_user, recipient_computer, recipient_room = (
         None,
         None,
@@ -54,7 +62,7 @@ async def create_message(
         recipient_user=recipient_user,
         recipient_computer=recipient_computer,
     )
-    await message.asave()
+
     return message
 
 
@@ -70,17 +78,19 @@ def get_datetime(timestamp: T_timestamp) -> datetime:
         raise TypeError
 
 
+# TODO rename
 async def acreate_message(
-    text: str,
-    sender: UserComputer,
-    recipient: UserComputer = None,
-    recipient_room: Room = None,
-    timestamp: T_timestamp = None,
+        text: str,
+        sender: User_or_Computer,
+        recipient: User_or_Computer = None,
+        recipient_room: Room = None,
+        timestamp: T_timestamp = None,
 ) -> Message:
-    """Create async message.html and return it"""
+    """Create/Save async message and return it"""
     message = await create_message(
         text, sender, recipient, recipient_room, timestamp
     )
+    await message.asave()
     return message
 
 
@@ -105,7 +115,7 @@ def _m_computer(user: User, computer: Computer) -> QuerySet:
 
 
 def computer_context(
-    user: User, chosen_computer: Computer
+        user: User, chosen_computer: Computer
 ) -> Dict[str, QuerySet | User]:
     """Get sent and received messages from chosen_computer. And return context dict"""
     if not isinstance(chosen_computer, Computer):
@@ -122,7 +132,66 @@ def computer_context(
 class SenderTypes:
     USER = "user"
     COMPUTER = "computer"
+    SYSTEM = "system"
 
     @staticmethod
     def context() -> Dict[str, str]:
-        return {"User": SenderTypes.USER, "Computer": SenderTypes.COMPUTER}
+        return {"User": SenderTypes.USER, "Computer": SenderTypes.COMPUTER, "System": SenderTypes.SYSTEM}
+
+
+User = get_user_model()  # for typing, can make TYPE
+logger_send_message_to_computer = logging.getLogger(__name__ + ".send_message_to_computer")
+
+
+async def send_message_to_computer(user_id: int, computer_name: str, text: str, is_create_message: bool = True):
+    """
+    Send message to computer from system.
+    If it online otherwise do nothing
+
+    Can choose save message to db or not
+    """
+
+    try:
+        user = await User.objects.aget(pk=user_id)
+
+        computer = await Computer.objects.aget(name=computer_name)
+        if not computer.channel_name:
+            logger_send_message_to_computer.warning(f"computer {computer.name} doesn't have channel_name")
+            return
+
+        channel_layer = get_channel_layer()
+
+        reply_channel = await channel_layer.new_channel(prefix="reply")
+
+        # create message only if it needs
+        if is_create_message:
+            message = await acreate_message(text, user, computer)
+        else:
+            message = await create_message(text, user, computer)
+
+        correlation_id = str(uuid.uuid4())
+
+        await channel_layer.send(
+            computer.channel_name,
+            {
+                "type_sender": SenderTypes.SYSTEM,
+                "type": "pk_system_message",
+                "message": message.text,
+                "sender": int(user.id),
+                "date": message.get_timestamp,
+                "reply_to": reply_channel,
+                "correlation_id": correlation_id
+            }
+        )
+
+        response = await channel_layer.receive(reply_channel)
+
+        if response.get("correlation_id") != correlation_id:
+            # TODO do something
+            raise ValueError(f"Correlation id isn't same {response.get("correlation_id")}-{correlation_id}")
+
+        return response
+    except Computer.DoesNotExist as e:
+        logger_send_message_to_computer.error(e)
+    except User.DoesNotExist as e:
+        logger_send_message_to_computer.error(e)

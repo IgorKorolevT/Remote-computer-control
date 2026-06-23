@@ -13,6 +13,32 @@ services:
       - redis
       - postgres
 
+  worker:
+    build:
+      context: .
+    container_name: worker
+    volumes:
+      - .:/app
+      - static:/app/staticfiles
+      - media:/app/media
+    command: celery -A Django_course_project worker -l INFO --concurrency=4
+    depends_on:
+      - web
+      - redis
+
+  celery-beat:
+    build:
+      context: .
+    container_name: celery_beat
+    volumes:
+      - .:/app
+      - static:/app/staticfiles
+      - media:/app/media
+    command: celery -A Django_course_project beat -l INFO
+    depends_on:
+      - web
+      - redis
+
   redis:
     image: redis:7
     container_name: computer_control_redis
