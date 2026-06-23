@@ -1,4 +1,5 @@
 import json
+from typing import Any
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -59,16 +60,17 @@ class ComputerDetailView(LoginRequiredMixin, DetailView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        context = self.get_context_data(object=self.object, is_monitoring=self.is_monitoring())
+        context = self.get_context_data(object=self.object, is_monitoring=self.get_task_context())
         return self.render_to_response(context)
 
-    def is_monitoring(self) -> bool:
+    def get_task_context(self) -> dict[str, Any]:
         task_name = generate_same_name(self.request.user.id, self.object.name)
         try:
             task = PeriodicTask.objects.get(name=task_name)
-            return task.enabled
+            return {"enable": task.enabled, "every": task.interval.every, "period": task.interval.period}
         except PeriodicTask.DoesNotExist:
-            return False
+            # defaults
+            return {"enable": False, "every": 5, "period": IntervalSchedule.MINUTES} # TODO remove
 
 
 class ComputerListView(LoginRequiredMixin, ListView):
