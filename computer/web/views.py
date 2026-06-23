@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse, Http404, HttpResponseRedirect
@@ -133,7 +135,7 @@ def toggle_computer(request, name):
             defaults={
                 'task': 'event.tasks.kill_programs_task',
                 'interval': schedule,
-                'args': [user.id, computer.name],
+                'args': json.dumps([user.id, computer.name]),
                 'enabled': True,
                 'description': f"Auto kill programs for user {user.id} on {computer.name}"
             }
