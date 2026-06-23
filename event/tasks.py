@@ -8,10 +8,11 @@ from event.utils import get_programs
 
 logger = logging.getLogger(__name__)
 
-@shared_task
-def kill_programs_task(user_id: int, computer_name: str):
+@shared_task(bind=True)
+def kill_programs_task(self, user_id: int, computer_name: str):
     """Don't create/save message to db"""
     programs = get_programs(user_id, computer_name)
+    self.update_state(state='PROGRESS', meta={'status': 'get_programs'})
     # TODO replace to another file
     process_names = []
     for program in programs:
@@ -26,8 +27,9 @@ def kill_programs_task(user_id: int, computer_name: str):
             process_names.append(name + ".exe")
     processes_str = " /im ".join(process_names)
     cmd = f'taskkill /f /fi "username eq %username%" /im {processes_str}'
-    logger.debug(cmd)
+    self.update_state(state='PROGRESS', meta={'status': 'create cmd'})
 
     result = async_to_sync(send_message_to_computer)(user_id, computer_name, cmd, False)
+    self.update_state(state='PROGRESS', meta={'status': 'completed'})
 
     return result

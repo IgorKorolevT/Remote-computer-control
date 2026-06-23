@@ -162,6 +162,8 @@ def toggle_computer(request, name):
             period=period
         )
 
+        PeriodicTask.objects.filter(name=task_name).delete() # delete old PeriodicTask with old IntervalSchedule
+
         PeriodicTask.objects.update_or_create(
             name=task_name,
             defaults={
