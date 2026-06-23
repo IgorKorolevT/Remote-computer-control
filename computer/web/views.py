@@ -55,6 +55,19 @@ class ComputerDetailView(LoginRequiredMixin, DetailView):
             return pk
         raise Http404
 
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object, is_monitoring=self.is_monitoring())
+        return self.render_to_response(context)
+
+    def is_monitoring(self) -> bool:
+        task_name = generate_same_name(self.request.user.id, self.object.name)
+        try:
+            task = PeriodicTask.objects.get(name=task_name)
+            return task.enabled
+        except PeriodicTask.DoesNotExist:
+            return False
+
 
 class ComputerListView(LoginRequiredMixin, ListView):
     model = Computer
@@ -104,14 +117,14 @@ class ComputerDeleteView(LoginRequiredMixin, DeleteView):
         self.object.users.remove(request.user)
         return HttpResponseRedirect(self.get_success_url())
 
+# TODO remove
+def generate_same_name(user_id: int, computer_name: str) -> str:
+    return f"monitor_{user_id}_{computer_name}"
 
 @login_required
 @require_POST
 def toggle_computer(request, name):
     logger = logging.getLogger(f"toggle_{name}")
-    # TODO remove
-    def generate_same_name(user_id: int, computer_name: str) -> str:
-        return f"monitor_{user_id}_{computer_name}"
 
     computer = get_object_or_404(Computer, name=name)
     user = request.user
