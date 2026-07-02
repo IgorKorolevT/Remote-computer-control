@@ -1,4 +1,5 @@
 import json
+from typing import Any
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -59,16 +60,19 @@ class ComputerDetailView(LoginRequiredMixin, DetailView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        context = self.get_context_data(object=self.object, is_monitoring=self.is_monitoring())
+        task_contex = self.get_task_context()
+        context = self.get_context_data(object=self.object, is_monitoring=task_contex["is_monitoring"],
+                                        every=task_contex["every"], period=task_contex["period"])
         return self.render_to_response(context)
 
-    def is_monitoring(self) -> bool:
+    def get_task_context(self) -> dict[str, Any]:
         task_name = generate_same_name(self.request.user.id, self.object.name)
         try:
             task = PeriodicTask.objects.get(name=task_name)
-            return task.enabled
+            return {"is_monitoring": task.enabled, "every": task.interval.every, "period": task.interval.period}
         except PeriodicTask.DoesNotExist:
-            return False
+            # defaults
+            return {"is_monitoring": False, "every": 5, "period": IntervalSchedule.MINUTES}  # TODO remove
 
 
 class ComputerListView(LoginRequiredMixin, ListView):
@@ -119,9 +123,11 @@ class ComputerDeleteView(LoginRequiredMixin, DeleteView):
         self.object.users.remove(request.user)
         return HttpResponseRedirect(self.get_success_url())
 
+
 # TODO remove
 def generate_same_name(user_id: int, computer_name: str) -> str:
     return f"monitor_{user_id}_{computer_name}"
+
 
 @login_required
 @require_POST
@@ -155,6 +161,8 @@ def toggle_computer(request, name):
             every=every,
             period=period
         )
+
+        PeriodicTask.objects.filter(name=task_name).delete() # delete old PeriodicTask with old IntervalSchedule
 
         PeriodicTask.objects.update_or_create(
             name=task_name,
