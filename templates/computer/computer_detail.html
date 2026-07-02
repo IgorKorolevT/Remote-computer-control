@@ -44,7 +44,7 @@
                     <input type="number"
                            class="form-control"
                            name="every"
-                           value="5"
+                           value="{{ every }}"
                            min="1"
                            required>
                 </div>
@@ -52,10 +52,10 @@
                 <div class="col-md-5">
                     <label class="form-label">Period</label>
                     <select class="form-select" name="period" required>
-                        <option value="MINUTES">Minutes</option>
-                        <option value="HOURS">Hours</option>
-                        <option value="DAYS">Days</option>
-                        <option value="SECONDS">Seconds</option>
+                        <option value="MINUTES" {% if period == 'minutes' %}selected{% endif %}>Minutes</option>
+                        <option value="HOURS" {% if period == 'hours' %}selected{% endif %}>Hours</option>
+                        <option value="DAYS" {% if period == 'days' %}selected{% endif %}>Days</option>
+                        <option value="SECONDS" {% if period == 'seconds' %}selected{% endif %}>Seconds</option>
                     </select>
                 </div>
             </div>
